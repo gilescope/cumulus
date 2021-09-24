@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `client/service/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../cumulus_client_service/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `client&#x2F;service&#x2F;src&#x2F;lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../cumulus_client_service/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input"name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -359,17 +357,6 @@
 <span id="357">357</span>
 <span id="358">358</span>
 <span id="359">359</span>
-<span id="360">360</span>
-<span id="361">361</span>
-<span id="362">362</span>
-<span id="363">363</span>
-<span id="364">364</span>
-<span id="365">365</span>
-<span id="366">366</span>
-<span id="367">367</span>
-<span id="368">368</span>
-<span id="369">369</span>
-<span id="370">370</span>
 </pre><pre class="rust">
 <span class="comment">// Copyright 2020-2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// This file is part of Cumulus.</span>
@@ -491,19 +478,17 @@
 		<span class="ident">_phantom</span>: <span class="ident">PhantomData</span>,
 	});
 
-	<span class="ident">relay_chain_full_node</span>
-		.<span class="ident">client</span>
-		.<span class="ident">execute_with</span>(<span class="ident">StartPoVRecovery</span> {
-			<span class="ident">para_id</span>,
-			<span class="ident">client</span>: <span class="ident">client</span>.<span class="ident">clone</span>(),
-			<span class="ident">import_queue</span>,
-			<span class="ident">task_manager</span>,
-			<span class="ident">overseer_handle</span>: <span class="ident">relay_chain_full_node</span>
-				.<span class="ident">overseer_handle</span>
-				.<span class="ident">clone</span>()
-				.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="string">&quot;Polkadot full node did not provide an `OverseerHandle`!&quot;</span>)<span class="question-mark">?</span>,
-			<span class="ident">_phantom</span>: <span class="ident">PhantomData</span>,
-		})<span class="question-mark">?</span>;
+	<span class="ident">relay_chain_full_node</span>.<span class="ident">client</span>.<span class="ident">execute_with</span>(<span class="ident">StartPoVRecovery</span> {
+		<span class="ident">para_id</span>,
+		<span class="ident">client</span>: <span class="ident">client</span>.<span class="ident">clone</span>(),
+		<span class="ident">import_queue</span>,
+		<span class="ident">task_manager</span>,
+		<span class="ident">overseer_handle</span>: <span class="ident">relay_chain_full_node</span>
+			.<span class="ident">overseer_handle</span>
+			.<span class="ident">clone</span>()
+			.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="string">&quot;Polkadot full node did not provide an `OverseerHandle`!&quot;</span>)<span class="question-mark">?</span>,
+		<span class="ident">_phantom</span>: <span class="ident">PhantomData</span>,
+	})<span class="question-mark">?</span>;
 
 	<span class="ident">cumulus_client_collator::start_collator</span>(<span class="ident">cumulus_client_collator::StartCollatorParams</span> {
 		<span class="ident">runtime_api</span>: <span class="ident">client</span>.<span class="ident">clone</span>(),
@@ -612,9 +597,7 @@
 			<span class="self">self</span>.<span class="ident">announce_block</span>,
 		);
 
-		<span class="self">self</span>.<span class="ident">task_manager</span>
-			.<span class="ident">spawn_essential_handle</span>()
-			.<span class="ident">spawn</span>(<span class="string">&quot;cumulus-consensus&quot;</span>, <span class="ident">consensus</span>);
+		<span class="self">self</span>.<span class="ident">task_manager</span>.<span class="ident">spawn_essential_handle</span>().<span class="ident">spawn</span>(<span class="string">&quot;cumulus-consensus&quot;</span>, <span class="ident">consensus</span>);
 	}
 }
 
@@ -684,9 +667,7 @@
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">RFullNode</span><span class="op">&lt;</span><span class="ident">PClient</span><span class="op">&gt;</span>, <span class="ident">polkadot_service::Error</span><span class="op">&gt;</span> {
 	<span class="kw">let</span> <span class="ident">is_light</span> <span class="op">=</span> <span class="macro">matches!</span>(<span class="ident">config</span>.<span class="ident">role</span>, <span class="ident">Role::Light</span>);
 	<span class="kw">if</span> <span class="ident">is_light</span> {
-		<span class="prelude-val">Err</span>(<span class="ident">polkadot_service::Error::Sub</span>(
-			<span class="string">&quot;Light client not supported.&quot;</span>.<span class="ident">into</span>(),
-		))
+		<span class="prelude-val">Err</span>(<span class="ident">polkadot_service::Error::Sub</span>(<span class="string">&quot;Light client not supported.&quot;</span>.<span class="ident">into</span>()))
 	} <span class="kw">else</span> {
 		<span class="kw">let</span> <span class="ident">collator_key</span> <span class="op">=</span> <span class="ident">CollatorPair::generate</span>().<span class="number">0</span>;
 
@@ -700,10 +681,7 @@
 			<span class="ident">polkadot_service::RealOverseerGen</span>,
 		)<span class="question-mark">?</span>;
 
-		<span class="prelude-val">Ok</span>(<span class="ident">RFullNode</span> {
-			<span class="ident">relay_chain_full_node</span>,
-			<span class="ident">collator_key</span>,
-		})
+		<span class="prelude-val">Ok</span>(<span class="ident">RFullNode</span> { <span class="ident">relay_chain_full_node</span>, <span class="ident">collator_key</span> })
 	}
 }
 
@@ -732,9 +710,7 @@
 		<span class="ident">number</span>: <span class="ident">NumberFor</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
 		<span class="ident">justifications</span>: <span class="ident">Justifications</span>,
 	) {
-		<span class="self">self</span>.<span class="number">0</span>
-			.<span class="ident">lock</span>()
-			.<span class="ident">import_justifications</span>(<span class="ident">who</span>, <span class="ident">hash</span>, <span class="ident">number</span>, <span class="ident">justifications</span>)
+		<span class="self">self</span>.<span class="number">0</span>.<span class="ident">lock</span>().<span class="ident">import_justifications</span>(<span class="ident">who</span>, <span class="ident">hash</span>, <span class="ident">number</span>, <span class="ident">justifications</span>)
 	}
 
 	<span class="kw">fn</span> <span class="ident">poll_actions</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">std::task::Context</span>, <span class="ident">link</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Link</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>) {
@@ -742,4 +718,6 @@
 	}
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="cumulus_client_service" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="cumulus_client_service" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
+    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
+</body></html>

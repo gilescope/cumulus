@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `client/consensus/common/src/parachain_consensus.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>parachain_consensus.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../cumulus_client_consensus_common/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `client&#x2F;consensus&#x2F;common&#x2F;src&#x2F;parachain_consensus.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>parachain_consensus.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../cumulus_client_consensus_common/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input"name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -418,19 +416,6 @@
 <span id="416">416</span>
 <span id="417">417</span>
 <span id="418">418</span>
-<span id="419">419</span>
-<span id="420">420</span>
-<span id="421">421</span>
-<span id="422">422</span>
-<span id="423">423</span>
-<span id="424">424</span>
-<span id="425">425</span>
-<span id="426">426</span>
-<span id="427">427</span>
-<span id="428">428</span>
-<span id="429">429</span>
-<span id="430">430</span>
-<span id="431">431</span>
 </pre><pre class="rust">
 <span class="comment">// Copyright 2019-2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// This file is part of Cumulus.</span>
@@ -509,7 +494,7 @@
 			<span class="ident">h</span>
 		} <span class="kw">else</span> {
 			<span class="macro">tracing::debug!</span>(<span class="ident">target</span>: <span class="string">&quot;cumulus-consensus&quot;</span>, <span class="string">&quot;Stopping following finalized head.&quot;</span>);
-			<span class="kw">return</span>;
+			<span class="kw">return</span>
 		};
 
 		<span class="kw">let</span> <span class="ident">header</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">Block::Header::decode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">&amp;</span><span class="ident">finalized_head</span>[..]) {
@@ -520,8 +505,8 @@
 					<span class="ident">error</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">err</span>,
 					<span class="string">&quot;Could not decode parachain header while following finalized heads.&quot;</span>,
 				);
-				<span class="kw">continue</span>;
-			}
+				<span class="kw">continue</span>
+			},
 		};
 
 		<span class="kw">let</span> <span class="ident">hash</span> <span class="op">=</span> <span class="ident">header</span>.<span class="ident">hash</span>();
@@ -574,12 +559,8 @@
 	<span class="ident">R</span>: <span class="ident">RelaychainClient</span>,
 	<span class="ident">B</span>: <span class="ident">Backend</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
 {
-	<span class="kw">let</span> <span class="ident">follow_new_best</span> <span class="op">=</span> <span class="ident">follow_new_best</span>(
-		<span class="ident">para_id</span>,
-		<span class="ident">parachain</span>.<span class="ident">clone</span>(),
-		<span class="ident">relay_chain</span>.<span class="ident">clone</span>(),
-		<span class="ident">announce_block</span>,
-	);
+	<span class="kw">let</span> <span class="ident">follow_new_best</span> <span class="op">=</span>
+		<span class="ident">follow_new_best</span>(<span class="ident">para_id</span>, <span class="ident">parachain</span>.<span class="ident">clone</span>(), <span class="ident">relay_chain</span>.<span class="ident">clone</span>(), <span class="ident">announce_block</span>);
 	<span class="kw">let</span> <span class="ident">follow_finalized_head</span> <span class="op">=</span> <span class="ident">follow_finalized_head</span>(<span class="ident">para_id</span>, <span class="ident">parachain</span>, <span class="ident">relay_chain</span>);
 	<span class="macro">select!</span> {
 		<span class="kw">_</span> <span class="op">=</span> <span class="ident">follow_new_best</span>.<span class="ident">fuse</span>() <span class="op">=</span><span class="op">&gt;</span> {},
@@ -676,12 +657,12 @@
 	};
 
 	<span class="kw">let</span> <span class="ident">unset_hash</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">notification</span>.<span class="ident">header</span>.<span class="ident">number</span>() <span class="op">&lt;</span> <span class="ident">unset_best_header</span>.<span class="ident">number</span>() {
-		<span class="kw">return</span>;
+		<span class="kw">return</span>
 	} <span class="kw">else</span> <span class="kw">if</span> <span class="ident">notification</span>.<span class="ident">header</span>.<span class="ident">number</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">unset_best_header</span>.<span class="ident">number</span>() {
 		<span class="kw">let</span> <span class="ident">unset_hash</span> <span class="op">=</span> <span class="ident">unset_best_header</span>.<span class="ident">hash</span>();
 
 		<span class="kw">if</span> <span class="ident">unset_hash</span> <span class="op">!</span><span class="op">=</span> <span class="ident">notification</span>.<span class="ident">hash</span> {
-			<span class="kw">return</span>;
+			<span class="kw">return</span>
 		} <span class="kw">else</span> {
 			<span class="ident">unset_hash</span>
 		}
@@ -697,7 +678,7 @@
 				.<span class="ident">expect</span>(<span class="string">&quot;We checked above that the value is set; qed&quot;</span>);
 
 			<span class="ident">import_block_as_new_best</span>(<span class="ident">unset_hash</span>, <span class="ident">unset_best_header</span>, <span class="ident">parachain</span>).<span class="kw">await</span>;
-		}
+		},
 		<span class="ident">state</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">tracing::debug!</span>(
 			<span class="ident">target</span>: <span class="string">&quot;cumulus-consensus&quot;</span>,
 			<span class="question-mark">?</span><span class="ident">unset_best_header</span>,
@@ -726,8 +707,8 @@
 				<span class="ident">error</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">err</span>,
 				<span class="string">&quot;Could not decode Parachain header while following best heads.&quot;</span>,
 			);
-			<span class="kw">return</span>;
-		}
+			<span class="kw">return</span>
+		},
 	};
 
 	<span class="kw">let</span> <span class="ident">hash</span> <span class="op">=</span> <span class="ident">parachain_head</span>.<span class="ident">hash</span>();
@@ -745,14 +726,14 @@
 				<span class="ident">unset_best_header</span>.<span class="ident">take</span>();
 
 				<span class="ident">import_block_as_new_best</span>(<span class="ident">hash</span>, <span class="ident">parachain_head</span>, <span class="ident">parachain</span>).<span class="kw">await</span>;
-			}
+			},
 			<span class="prelude-val">Ok</span>(<span class="ident">BlockStatus::InChainPruned</span>) <span class="op">=</span><span class="op">&gt;</span> {
 				<span class="macro">tracing::error!</span>(
 					<span class="ident">target</span>: <span class="string">&quot;cumulus-collator&quot;</span>,
 					<span class="ident">block_hash</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">hash</span>,
 					<span class="string">&quot;Trying to set pruned block as new best!&quot;</span>,
 				);
-			}
+			},
 			<span class="prelude-val">Ok</span>(<span class="ident">BlockStatus::Unknown</span>) <span class="op">=</span><span class="op">&gt;</span> {
 				<span class="kw-2">*</span><span class="ident">unset_best_header</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">parachain_head</span>);
 
@@ -761,7 +742,7 @@
 					<span class="ident">block_hash</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">hash</span>,
 					<span class="string">&quot;Parachain block not yet imported, waiting for import to enact as best block.&quot;</span>,
 				);
-			}
+			},
 			<span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
 				<span class="macro">tracing::error!</span>(
 					<span class="ident">target</span>: <span class="string">&quot;cumulus-collator&quot;</span>,
@@ -769,8 +750,8 @@
 					<span class="ident">error</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">e</span>,
 					<span class="string">&quot;Failed to get block status of block.&quot;</span>,
 				);
-			}
-			<span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {}
+			},
+			<span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {},
 		}
 	}
 }
@@ -790,7 +771,7 @@
 			<span class="string">&quot;Skipping importing block as new best block, because there already exists a \
 			 best block with an higher number&quot;</span>,
 		);
-		<span class="kw">return</span>;
+		<span class="kw">return</span>
 	}
 
 	<span class="comment">// Make it the new best block</span>
@@ -798,10 +779,7 @@
 	<span class="ident">block_import_params</span>.<span class="ident">fork_choice</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">ForkChoiceStrategy::Custom</span>(<span class="bool-val">true</span>));
 	<span class="ident">block_import_params</span>.<span class="ident">import_existing</span> <span class="op">=</span> <span class="bool-val">true</span>;
 
-	<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span> (<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">parachain</span>)
-		.<span class="ident">import_block</span>(<span class="ident">block_import_params</span>, <span class="ident">Default::default</span>())
-		.<span class="kw">await</span>
-	{
+	<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span> (<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">parachain</span>).<span class="ident">import_block</span>(<span class="ident">block_import_params</span>, <span class="ident">Default::default</span>()).<span class="kw">await</span> {
 		<span class="macro">tracing::warn!</span>(
 			<span class="ident">target</span>: <span class="string">&quot;cumulus-consensus&quot;</span>,
 			<span class="ident">block_hash</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">hash</span>,
@@ -826,10 +804,7 @@
 		<span class="self">self</span>.<span class="ident">import_notification_stream</span>()
 			.<span class="ident">filter_map</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">n</span><span class="op">|</span> {
 				<span class="ident">future::ready</span>(<span class="kw">if</span> <span class="ident">n</span>.<span class="ident">is_new_best</span> {
-					<span class="ident">relay_chain</span>
-						.<span class="ident">parachain_head_at</span>(<span class="kw-2">&amp;</span><span class="ident">BlockId::hash</span>(<span class="ident">n</span>.<span class="ident">hash</span>), <span class="ident">para_id</span>)
-						.<span class="ident">ok</span>()
-						.<span class="ident">flatten</span>()
+					<span class="ident">relay_chain</span>.<span class="ident">parachain_head_at</span>(<span class="kw-2">&amp;</span><span class="ident">BlockId::hash</span>(<span class="ident">n</span>.<span class="ident">hash</span>), <span class="ident">para_id</span>).<span class="ident">ok</span>().<span class="ident">flatten</span>()
 				} <span class="kw">else</span> {
 					<span class="prelude-val">None</span>
 				})
@@ -843,10 +818,7 @@
 		<span class="self">self</span>.<span class="ident">finality_notification_stream</span>()
 			.<span class="ident">filter_map</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">n</span><span class="op">|</span> {
 				<span class="ident">future::ready</span>(
-					<span class="ident">relay_chain</span>
-						.<span class="ident">parachain_head_at</span>(<span class="kw-2">&amp;</span><span class="ident">BlockId::hash</span>(<span class="ident">n</span>.<span class="ident">hash</span>), <span class="ident">para_id</span>)
-						.<span class="ident">ok</span>()
-						.<span class="ident">flatten</span>(),
+					<span class="ident">relay_chain</span>.<span class="ident">parachain_head_at</span>(<span class="kw-2">&amp;</span><span class="ident">BlockId::hash</span>(<span class="ident">n</span>.<span class="ident">hash</span>), <span class="ident">para_id</span>).<span class="ident">ok</span>().<span class="ident">flatten</span>(),
 				)
 			})
 			.<span class="ident">boxed</span>()
@@ -864,4 +836,6 @@
 	}
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="cumulus_client_consensus_common" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="cumulus_client_consensus_common" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
+    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
+</body></html>
