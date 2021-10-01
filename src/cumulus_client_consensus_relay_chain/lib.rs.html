@@ -366,12 +366,6 @@
 <span id="366">366</span>
 <span id="367">367</span>
 <span id="368">368</span>
-<span id="369">369</span>
-<span id="370">370</span>
-<span id="371">371</span>
-<span id="372">372</span>
-<span id="373">373</span>
-<span id="374">374</span>
 </pre><pre class="rust">
 <span class="comment">// Copyright 2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// This file is part of Cumulus.</span>
@@ -637,8 +631,6 @@
 	<span class="op">&gt;</span>,
 	<span class="ident">BI</span>: <span class="ident">BlockImport</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">RBackend</span>: <span class="ident">Backend</span><span class="op">&lt;</span><span class="ident">PBlock</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-	<span class="comment">// Rust bug: https://github.com/rust-lang/rust/issues/24159</span>
-	<span class="ident">sc_client_api::StateBackendFor</span><span class="op">&lt;</span><span class="ident">RBackend</span>, <span class="ident">PBlock</span><span class="op">&gt;</span>: <span class="ident">sc_client_api::StateBackend</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">PBlock</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="ident">CIDP</span>: <span class="ident">CreateInherentDataProviders</span><span class="op">&lt;</span><span class="ident">Block</span>, (<span class="ident">PHash</span>, <span class="ident">PersistedValidationData</span>)<span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 {
 	<span class="ident">RelayChainConsensusBuilder::new</span>(
@@ -671,8 +663,6 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RBackend</span>, <span class="ident">CIDP</span><span class="op">&gt;</span> <span class="ident">RelayChainConsensusBuilder</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RBackend</span>, <span class="ident">CIDP</span><span class="op">&gt;</span>
 <span class="kw">where</span>
 	<span class="ident">Block</span>: <span class="ident">BlockT</span>,
-	<span class="comment">// Rust bug: https://github.com/rust-lang/rust/issues/24159</span>
-	<span class="ident">sc_client_api::StateBackendFor</span><span class="op">&lt;</span><span class="ident">RBackend</span>, <span class="ident">PBlock</span><span class="op">&gt;</span>: <span class="ident">sc_client_api::StateBackend</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">PBlock</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="ident">PF</span>: <span class="ident">Environment</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">PF::Proposer</span>: <span class="ident">Proposer</span><span class="op">&lt;</span>
 		<span class="ident">Block</span>,
@@ -714,8 +704,6 @@
 	<span class="kw">for</span> <span class="ident">RelayChainConsensusBuilder</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RBackend</span>, <span class="ident">CIDP</span><span class="op">&gt;</span>
 <span class="kw">where</span>
 	<span class="ident">Block</span>: <span class="ident">BlockT</span>,
-	<span class="comment">// Rust bug: https://github.com/rust-lang/rust/issues/24159</span>
-	<span class="ident">sc_client_api::StateBackendFor</span><span class="op">&lt;</span><span class="ident">RBackend</span>, <span class="ident">PBlock</span><span class="op">&gt;</span>: <span class="ident">sc_client_api::StateBackend</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">PBlock</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="ident">PF</span>: <span class="ident">Environment</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">PF::Proposer</span>: <span class="ident">Proposer</span><span class="op">&lt;</span>
 		<span class="ident">Block</span>,
