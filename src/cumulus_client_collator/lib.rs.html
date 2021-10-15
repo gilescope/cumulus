@@ -445,10 +445,6 @@
 <span id="445">445</span>
 <span id="446">446</span>
 <span id="447">447</span>
-<span id="448">448</span>
-<span id="449">449</span>
-<span id="450">450</span>
-<span id="451">451</span>
 </pre><pre class="rust">
 <span class="comment">// Copyright 2019-2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// This file is part of Cumulus.</span>
@@ -779,7 +775,7 @@
 	<span class="kw">use</span> <span class="ident">cumulus_test_runtime</span>::{<span class="ident">Block</span>, <span class="ident">Header</span>};
 	<span class="kw">use</span> <span class="ident">futures</span>::{<span class="ident">channel::mpsc</span>, <span class="ident">executor::block_on</span>, <span class="ident">StreamExt</span>};
 	<span class="kw">use</span> <span class="ident">polkadot_node_subsystem_test_helpers::ForwardSubsystem</span>;
-	<span class="kw">use</span> <span class="ident">polkadot_overseer</span>::{<span class="ident">AllSubsystems</span>, <span class="ident">HeadSupportsParachains</span>, <span class="ident">Overseer</span>};
+	<span class="kw">use</span> <span class="ident">polkadot_overseer</span>::{<span class="ident">dummy::dummy_overseer_builder</span>, <span class="ident">HeadSupportsParachains</span>};
 	<span class="kw">use</span> <span class="ident">sp_consensus::BlockOrigin</span>;
 	<span class="kw">use</span> <span class="ident">sp_core</span>::{<span class="ident">testing::TaskExecutor</span>, <span class="ident">Pair</span>};
 	<span class="kw">use</span> <span class="ident">sp_runtime::traits::BlakeTwo256</span>;
@@ -835,16 +831,12 @@
 
 		<span class="kw">let</span> (<span class="ident">sub_tx</span>, <span class="ident">sub_rx</span>) <span class="op">=</span> <span class="ident">mpsc::channel</span>(<span class="number">64</span>);
 
-		<span class="kw">let</span> <span class="ident">all_subsystems</span> <span class="op">=</span>
-			<span class="ident">AllSubsystems</span>::<span class="op">&lt;</span>()<span class="op">&gt;</span><span class="ident">::dummy</span>().<span class="ident">replace_collation_generation</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">ForwardSubsystem</span>(<span class="ident">sub_tx</span>));
-		<span class="kw">let</span> (<span class="ident">overseer</span>, <span class="ident">handle</span>) <span class="op">=</span> <span class="ident">Overseer::new</span>(
-			<span class="ident">Vec::new</span>(),
-			<span class="ident">all_subsystems</span>,
-			<span class="prelude-val">None</span>,
-			<span class="ident">AlwaysSupportsParachains</span>,
-			<span class="ident">spawner</span>.<span class="ident">clone</span>(),
-		)
-		.<span class="ident">expect</span>(<span class="string">&quot;Creates overseer&quot;</span>);
+		<span class="kw">let</span> (<span class="ident">overseer</span>, <span class="ident">handle</span>) <span class="op">=</span>
+			<span class="ident">dummy_overseer_builder</span>(<span class="ident">spawner</span>.<span class="ident">clone</span>(), <span class="ident">AlwaysSupportsParachains</span>, <span class="prelude-val">None</span>)
+				.<span class="ident">expect</span>(<span class="string">&quot;Creates overseer builder&quot;</span>)
+				.<span class="ident">replace_collation_generation</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">ForwardSubsystem</span>(<span class="ident">sub_tx</span>))
+				.<span class="ident">build</span>()
+				.<span class="ident">expect</span>(<span class="string">&quot;Builds overseer&quot;</span>);
 
 		<span class="ident">spawner</span>.<span class="ident">spawn</span>(<span class="string">&quot;overseer&quot;</span>, <span class="ident">overseer</span>.<span class="ident">run</span>().<span class="ident">then</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="kw">async</span> { () }).<span class="ident">boxed</span>());
 
@@ -852,7 +844,7 @@
 			<span class="ident">runtime_api</span>: <span class="ident">client</span>.<span class="ident">clone</span>(),
 			<span class="ident">block_status</span>: <span class="ident">client</span>.<span class="ident">clone</span>(),
 			<span class="ident">announce_block</span>: <span class="ident">Arc::new</span>(<span class="ident">announce_block</span>),
-			<span class="ident">overseer_handle</span>: <span class="ident">OverseerHandle::Connected</span>(<span class="ident">handle</span>),
+			<span class="ident">overseer_handle</span>: <span class="ident">OverseerHandle::new</span>(<span class="ident">handle</span>),
 			<span class="ident">spawner</span>,
 			<span class="ident">para_id</span>,
 			<span class="ident">key</span>: <span class="ident">CollatorPair::generate</span>().<span class="number">0</span>,

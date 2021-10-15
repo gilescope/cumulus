@@ -1022,18 +1022,6 @@
 <span id="1022">1022</span>
 <span id="1023">1023</span>
 <span id="1024">1024</span>
-<span id="1025">1025</span>
-<span id="1026">1026</span>
-<span id="1027">1027</span>
-<span id="1028">1028</span>
-<span id="1029">1029</span>
-<span id="1030">1030</span>
-<span id="1031">1031</span>
-<span id="1032">1032</span>
-<span id="1033">1033</span>
-<span id="1034">1034</span>
-<span id="1035">1035</span>
-<span id="1036">1036</span>
 </pre><pre class="rust">
 <span class="comment">// Copyright 2020 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// This file is part of Cumulus.</span>
@@ -1091,6 +1079,7 @@
 };
 <span class="kw">use</span> <span class="ident">sp_std</span>::{<span class="ident">cmp</span>, <span class="ident">collections::btree_map::BTreeMap</span>, <span class="ident">prelude</span>::<span class="kw-2">*</span>};
 
+<span class="kw">mod</span> <span class="ident">migration</span>;
 <span class="kw">mod</span> <span class="ident">relay_state_snapshot</span>;
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">validate_block</span>;
@@ -1131,6 +1120,7 @@
 	<span class="kw">use</span> <span class="ident">frame_system::pallet_prelude</span>::<span class="kw-2">*</span>;
 
 	<span class="attribute">#[<span class="ident">pallet::pallet</span>]</span>
+	<span class="attribute">#[<span class="ident">pallet::storage_version</span>(<span class="ident">migration::STORAGE_VERSION</span>)]</span>
 	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw">_</span>);
 
 	<span class="attribute">#[<span class="ident">pallet::config</span>]</span>
@@ -1166,8 +1156,13 @@
 
 	<span class="attribute">#[<span class="ident">pallet::hooks</span>]</span>
 	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">Hooks</span><span class="op">&lt;</span><span class="ident">BlockNumberFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+		<span class="kw">fn</span> <span class="ident">on_runtime_upgrade</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+			<span class="ident">migration::on_runtime_upgrade</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>()
+		}
+
 		<span class="kw">fn</span> <span class="ident">on_finalize</span>(<span class="kw">_</span>: <span class="ident">T::BlockNumber</span>) {
 			<span class="op">&lt;</span><span class="ident">DidSetValidationCode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::kill</span>();
+			<span class="op">&lt;</span><span class="ident">UpgradeRestrictionSignal</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::kill</span>();
 
 			<span class="macro">assert!</span>(
 				<span class="op">&lt;</span><span class="ident">ValidationData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::exists</span>(),
@@ -1305,26 +1300,6 @@
 
 	<span class="attribute">#[<span class="ident">pallet::call</span>]</span>
 	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="doccomment">/// Force an already scheduled validation function upgrade to happen on a particular block.</span>
-		<span class="doccomment">///</span>
-		<span class="doccomment">/// Note that coordinating this block for the upgrade has to happen independently on the</span>
-		<span class="doccomment">/// relay chain and this parachain. Synchronizing the block for the upgrade is sensitive,</span>
-		<span class="doccomment">/// and this bypasses all checks and and normal protocols. Very easy to brick your chain</span>
-		<span class="doccomment">/// if done wrong.</span>
-		<span class="attribute">#[<span class="ident">pallet::weight</span>((<span class="number">0</span>, <span class="ident">DispatchClass::Operational</span>))]</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_upgrade_block</span>(
-			<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
-			<span class="ident">relay_chain_block</span>: <span class="ident">RelayChainBlockNumber</span>,
-		) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResult</span> {
-			<span class="ident">ensure_root</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
-			<span class="kw">if</span> <span class="op">&lt;</span><span class="ident">PendingRelayChainBlockNumber</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::get</span>().<span class="ident">is_some</span>() {
-				<span class="op">&lt;</span><span class="ident">PendingRelayChainBlockNumber</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">relay_chain_block</span>);
-				<span class="prelude-val">Ok</span>(())
-			} <span class="kw">else</span> {
-				<span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::NotScheduled</span>.<span class="ident">into</span>())
-			}
-		}
-
 		<span class="doccomment">/// Set the current validation data.</span>
 		<span class="doccomment">///</span>
 		<span class="doccomment">/// This should be invoked exactly once per block. It will panic at the finalization</span>
@@ -1355,25 +1330,41 @@
 
 			<span class="self">Self</span><span class="ident">::validate_validation_data</span>(<span class="kw-2">&amp;</span><span class="ident">vfp</span>);
 
-			<span class="comment">// initialization logic: we know that this runs exactly once every block,</span>
-			<span class="comment">// which means we can put the initialization logic here to remove the</span>
-			<span class="comment">// sequencing problem.</span>
-			<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">apply_block</span>) <span class="op">=</span> <span class="op">&lt;</span><span class="ident">PendingRelayChainBlockNumber</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::get</span>() {
-				<span class="kw">if</span> <span class="ident">vfp</span>.<span class="ident">relay_parent_number</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">apply_block</span> {
-					<span class="op">&lt;</span><span class="ident">PendingRelayChainBlockNumber</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::kill</span>();
-					<span class="kw">let</span> <span class="ident">validation_code</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">PendingValidationCode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::take</span>();
-					<span class="op">&lt;</span><span class="ident">LastUpgrade</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="kw-2">&amp;</span><span class="ident">apply_block</span>);
-					<span class="self">Self</span><span class="ident">::put_parachain_code</span>(<span class="kw-2">&amp;</span><span class="ident">validation_code</span>);
-					<span class="self">Self</span><span class="ident">::deposit_event</span>(<span class="ident">Event::ValidationFunctionApplied</span>(<span class="ident">vfp</span>.<span class="ident">relay_parent_number</span>));
-				}
-			}
-
 			<span class="kw">let</span> <span class="ident">relay_state_proof</span> <span class="op">=</span> <span class="ident">RelayChainStateProof::new</span>(
 				<span class="ident">T::SelfParaId::get</span>(),
 				<span class="ident">vfp</span>.<span class="ident">relay_parent_storage_root</span>,
 				<span class="ident">relay_chain_state</span>,
 			)
 			.<span class="ident">expect</span>(<span class="string">&quot;Invalid relay chain state proof&quot;</span>);
+
+			<span class="comment">// initialization logic: we know that this runs exactly once every block,</span>
+			<span class="comment">// which means we can put the initialization logic here to remove the</span>
+			<span class="comment">// sequencing problem.</span>
+			<span class="kw">let</span> <span class="ident">upgrade_go_ahead_signal</span> <span class="op">=</span> <span class="ident">relay_state_proof</span>
+				.<span class="ident">read_upgrade_go_ahead_signal</span>()
+				.<span class="ident">expect</span>(<span class="string">&quot;Invalid upgrade go ahead signal&quot;</span>);
+			<span class="kw">match</span> <span class="ident">upgrade_go_ahead_signal</span> {
+				<span class="prelude-val">Some</span>(<span class="ident">relay_chain::v1::UpgradeGoAhead::GoAhead</span>) <span class="op">=</span><span class="op">&gt;</span> {
+					<span class="macro">assert!</span>(
+						<span class="op">&lt;</span><span class="ident">PendingValidationCode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::exists</span>(),
+						<span class="string">&quot;No new validation function found in storage, GoAhead signal is not expected&quot;</span>,
+					);
+					<span class="kw">let</span> <span class="ident">validation_code</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">PendingValidationCode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::take</span>();
+
+					<span class="self">Self</span><span class="ident">::put_parachain_code</span>(<span class="kw-2">&amp;</span><span class="ident">validation_code</span>);
+					<span class="self">Self</span><span class="ident">::deposit_event</span>(<span class="ident">Event::ValidationFunctionApplied</span>(<span class="ident">vfp</span>.<span class="ident">relay_parent_number</span>));
+				},
+				<span class="prelude-val">Some</span>(<span class="ident">relay_chain::v1::UpgradeGoAhead::Abort</span>) <span class="op">=</span><span class="op">&gt;</span> {
+					<span class="op">&lt;</span><span class="ident">PendingValidationCode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::kill</span>();
+					<span class="self">Self</span><span class="ident">::deposit_event</span>(<span class="ident">Event::ValidationFunctionDiscarded</span>);
+				},
+				<span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> {},
+			}
+			<span class="op">&lt;</span><span class="ident">UpgradeRestrictionSignal</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(
+				<span class="ident">relay_state_proof</span>
+					.<span class="ident">read_upgrade_restriction_signal</span>()
+					.<span class="ident">expect</span>(<span class="string">&quot;Invalid upgrade restriction signal&quot;</span>),
+			);
 
 			<span class="kw">let</span> <span class="ident">host_config</span> <span class="op">=</span> <span class="ident">relay_state_proof</span>
 				.<span class="ident">read_abridged_host_configuration</span>()
@@ -1438,11 +1429,12 @@
 	<span class="attribute">#[<span class="ident">pallet::event</span>]</span>
 	<span class="attribute">#[<span class="ident">pallet::generate_deposit</span>(<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">deposit_event</span>)]</span>
 	<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> {
-		<span class="doccomment">/// The validation function has been scheduled to apply as of the contained relay chain</span>
-		<span class="doccomment">/// block number.</span>
-		<span class="ident">ValidationFunctionStored</span>(<span class="ident">RelayChainBlockNumber</span>),
+		<span class="doccomment">/// The validation function has been scheduled to apply.</span>
+		<span class="ident">ValidationFunctionStored</span>,
 		<span class="doccomment">/// The validation function was applied as of the contained relay chain block number.</span>
 		<span class="ident">ValidationFunctionApplied</span>(<span class="ident">RelayChainBlockNumber</span>),
+		<span class="doccomment">/// The relay-chain aborted the upgrade process.</span>
+		<span class="ident">ValidationFunctionDiscarded</span>,
 		<span class="doccomment">/// An upgrade has been authorized.</span>
 		<span class="ident">UpgradeAuthorized</span>(<span class="ident">T::Hash</span>),
 		<span class="doccomment">/// Some downward messages have been received and will be processed.</span>
@@ -1474,22 +1466,27 @@
 		<span class="ident">Unauthorized</span>,
 	}
 
-	<span class="doccomment">/// We need to store the new validation function for the span between</span>
-	<span class="doccomment">/// setting it and applying it. If it has a</span>
-	<span class="doccomment">/// value, then [`PendingValidationCode`] must have a real value, and</span>
-	<span class="doccomment">/// together will coordinate the block number where the upgrade will happen.</span>
-	<span class="attribute">#[<span class="ident">pallet::storage</span>]</span>
-	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">type</span> <span class="ident">PendingRelayChainBlockNumber</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="op">=</span>
-		<span class="ident">StorageValue</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">RelayChainBlockNumber</span><span class="op">&gt;</span>;
-
-	<span class="doccomment">/// The new validation function we will upgrade to when the relay chain</span>
-	<span class="doccomment">/// reaches [`PendingRelayChainBlockNumber`]. A real validation function must</span>
-	<span class="doccomment">/// exist here as long as [`PendingRelayChainBlockNumber`] is set.</span>
+	<span class="doccomment">/// In case of a scheduled upgrade, this storage field contains the validation code to be applied.</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// As soon as the relay chain gives us the go-ahead signal, we will overwrite the [`:code`][well_known_keys::CODE]</span>
+	<span class="doccomment">/// which will result the next block process with the new validation code. This concludes the upgrade process.</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// [well_known_keys::CODE]: sp_core::storage::well_known_keys::CODE</span>
 	<span class="attribute">#[<span class="ident">pallet::storage</span>]</span>
 	<span class="attribute">#[<span class="ident">pallet::getter</span>(<span class="kw">fn</span> <span class="ident">new_validation_function</span>)]</span>
 	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">type</span> <span class="ident">PendingValidationCode</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StorageValue</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">ValueQuery</span><span class="op">&gt;</span>;
 
+	<span class="doccomment">/// Validation code that is set by the parachain and is to be communicated to collator and</span>
+	<span class="doccomment">/// consequently the relay-chain.</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// This will be cleared in `on_initialize` of each new block if no other pallet already set</span>
+	<span class="doccomment">/// the value.</span>
+	<span class="attribute">#[<span class="ident">pallet::storage</span>]</span>
+	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">type</span> <span class="ident">NewValidationCode</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StorageValue</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">OptionQuery</span><span class="op">&gt;</span>;
+
 	<span class="doccomment">/// The [`PersistedValidationData`] set for this block.</span>
+	<span class="doccomment">/// This value is expected to be set only once per block and it&#39;s never stored</span>
+	<span class="doccomment">/// in the trie.</span>
 	<span class="attribute">#[<span class="ident">pallet::storage</span>]</span>
 	<span class="attribute">#[<span class="ident">pallet::getter</span>(<span class="kw">fn</span> <span class="ident">validation_data</span>)]</span>
 	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">type</span> <span class="ident">ValidationData</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StorageValue</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">PersistedValidationData</span><span class="op">&gt;</span>;
@@ -1498,9 +1495,16 @@
 	<span class="attribute">#[<span class="ident">pallet::storage</span>]</span>
 	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">type</span> <span class="ident">DidSetValidationCode</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StorageValue</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">bool</span>, <span class="ident">ValueQuery</span><span class="op">&gt;</span>;
 
-	<span class="doccomment">/// The last relay parent block number at which we signalled the code upgrade.</span>
+	<span class="doccomment">/// An option which indicates if the relay-chain restricts signalling a validation code upgrade.</span>
+	<span class="doccomment">/// In other words, if this is `Some` and [`NewValidationCode`] is `Some` then the produced</span>
+	<span class="doccomment">/// candidate will be invalid.</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// This storage item is a mirror of the corresponding value for the current parachain from the</span>
+	<span class="doccomment">/// relay-chain. This value is ephemeral which means it doesn&#39;t hit the storage. This value is</span>
+	<span class="doccomment">/// set after the inherent.</span>
 	<span class="attribute">#[<span class="ident">pallet::storage</span>]</span>
-	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">type</span> <span class="ident">LastUpgrade</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StorageValue</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">relay_chain::BlockNumber</span>, <span class="ident">ValueQuery</span><span class="op">&gt;</span>;
+	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">type</span> <span class="ident">UpgradeRestrictionSignal</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="op">=</span>
+		<span class="ident">StorageValue</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">relay_chain::v1::UpgradeRestriction</span><span class="op">&gt;</span>, <span class="ident">ValueQuery</span><span class="op">&gt;</span>;
 
 	<span class="doccomment">/// The snapshot of some state related to messaging relevant to the current parachain as per</span>
 	<span class="doccomment">/// the relay parent.</span>
@@ -1543,13 +1547,6 @@
 	<span class="doccomment">/// This will be cleared in `on_initialize` of each new block.</span>
 	<span class="attribute">#[<span class="ident">pallet::storage</span>]</span>
 	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">type</span> <span class="ident">ProcessedDownwardMessages</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StorageValue</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">u32</span>, <span class="ident">ValueQuery</span><span class="op">&gt;</span>;
-
-	<span class="doccomment">/// New validation code that was set in a block.</span>
-	<span class="doccomment">///</span>
-	<span class="doccomment">/// This will be cleared in `on_initialize` of each new block if no other pallet already set</span>
-	<span class="doccomment">/// the value.</span>
-	<span class="attribute">#[<span class="ident">pallet::storage</span>]</span>
-	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">type</span> <span class="ident">NewValidationCode</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StorageValue</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">OptionQuery</span><span class="op">&gt;</span>;
 
 	<span class="doccomment">/// HRMP watermark that was set in a block.</span>
 	<span class="doccomment">///</span>
@@ -1897,36 +1894,16 @@
 		<span class="op">&lt;</span><span class="ident">HostConfiguration</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::get</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">cfg</span><span class="op">|</span> <span class="ident">cfg</span>.<span class="ident">max_code_size</span>)
 	}
 
-	<span class="doccomment">/// Returns if a PVF/runtime upgrade could be signalled at the current block, and if so</span>
-	<span class="doccomment">/// when the new code will take the effect.</span>
-	<span class="kw">fn</span> <span class="ident">code_upgrade_allowed</span>(
-		<span class="ident">vfp</span>: <span class="kw-2">&amp;</span><span class="ident">PersistedValidationData</span>,
-		<span class="ident">cfg</span>: <span class="kw-2">&amp;</span><span class="ident">AbridgedHostConfiguration</span>,
-	) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">relay_chain::BlockNumber</span><span class="op">&gt;</span> {
-		<span class="kw">if</span> <span class="op">&lt;</span><span class="ident">PendingRelayChainBlockNumber</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::get</span>().<span class="ident">is_some</span>() {
-			<span class="comment">// There is already upgrade scheduled. Upgrade is not allowed.</span>
-			<span class="kw">return</span> <span class="prelude-val">None</span>
-		}
-
-		<span class="kw">let</span> <span class="ident">relay_blocks_since_last_upgrade</span> <span class="op">=</span>
-			<span class="ident">vfp</span>.<span class="ident">relay_parent_number</span>.<span class="ident">saturating_sub</span>(<span class="op">&lt;</span><span class="ident">LastUpgrade</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::get</span>());
-
-		<span class="kw">if</span> <span class="ident">relay_blocks_since_last_upgrade</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">cfg</span>.<span class="ident">validation_upgrade_frequency</span> {
-			<span class="comment">// The cooldown after the last upgrade hasn&#39;t elapsed yet. Upgrade is not allowed.</span>
-			<span class="kw">return</span> <span class="prelude-val">None</span>
-		}
-
-		<span class="prelude-val">Some</span>(<span class="ident">vfp</span>.<span class="ident">relay_parent_number</span> <span class="op">+</span> <span class="ident">cfg</span>.<span class="ident">validation_upgrade_delay</span>)
-	}
-
 	<span class="doccomment">/// The implementation of the runtime upgrade functionality for parachains.</span>
 	<span class="kw">fn</span> <span class="ident">set_code_impl</span>(<span class="ident">validation_function</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResult</span> {
+		<span class="comment">// Ensure that `ValidationData` exists. We do not care about the validation data per se,</span>
+		<span class="comment">// but we do care about the [`UpgradeRestrictionSignal`] which arrives with the same inherent.</span>
+		<span class="macro">ensure!</span>(<span class="op">&lt;</span><span class="ident">ValidationData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::exists</span>(), <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::ValidationDataNotAvailable</span>,);
+		<span class="macro">ensure!</span>(<span class="op">&lt;</span><span class="ident">UpgradeRestrictionSignal</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::get</span>().<span class="ident">is_none</span>(), <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::ProhibitedByPolkadot</span>);
+
 		<span class="macro">ensure!</span>(<span class="op">!</span><span class="op">&lt;</span><span class="ident">PendingValidationCode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::exists</span>(), <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::OverlappingUpgrades</span>);
-		<span class="kw">let</span> <span class="ident">vfp</span> <span class="op">=</span> <span class="self">Self</span><span class="ident">::validation_data</span>().<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::ValidationDataNotAvailable</span>)<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">cfg</span> <span class="op">=</span> <span class="self">Self</span><span class="ident">::host_configuration</span>().<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::HostConfigurationNotAvailable</span>)<span class="question-mark">?</span>;
 		<span class="macro">ensure!</span>(<span class="ident">validation_function</span>.<span class="ident">len</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">cfg</span>.<span class="ident">max_code_size</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::TooBig</span>);
-		<span class="kw">let</span> <span class="ident">apply_block</span> <span class="op">=</span>
-			<span class="self">Self</span><span class="ident">::code_upgrade_allowed</span>(<span class="kw-2">&amp;</span><span class="ident">vfp</span>, <span class="kw-2">&amp;</span><span class="ident">cfg</span>).<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::ProhibitedByPolkadot</span>)<span class="question-mark">?</span>;
 
 		<span class="comment">// When a code upgrade is scheduled, it has to be applied in two</span>
 		<span class="comment">// places, synchronized: both polkadot and the individual parachain</span>
@@ -1934,11 +1911,10 @@
 		<span class="comment">//</span>
 		<span class="comment">// `notify_polkadot_of_pending_upgrade` notifies polkadot; the `PendingValidationCode`</span>
 		<span class="comment">// storage keeps track locally for the parachain upgrade, which will</span>
-		<span class="comment">// be applied later.</span>
+		<span class="comment">// be applied later: when the relay-chain communicates go-ahead signal to us.</span>
 		<span class="self">Self</span><span class="ident">::notify_polkadot_of_pending_upgrade</span>(<span class="kw-2">&amp;</span><span class="ident">validation_function</span>);
-		<span class="op">&lt;</span><span class="ident">PendingRelayChainBlockNumber</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">apply_block</span>);
 		<span class="op">&lt;</span><span class="ident">PendingValidationCode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">validation_function</span>);
-		<span class="self">Self</span><span class="ident">::deposit_event</span>(<span class="ident">Event::ValidationFunctionStored</span>(<span class="ident">apply_block</span>));
+		<span class="self">Self</span><span class="ident">::deposit_event</span>(<span class="ident">Event::ValidationFunctionStored</span>);
 
 		<span class="prelude-val">Ok</span>(())
 	}

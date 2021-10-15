@@ -136,6 +136,9 @@
 <span id="136">136</span>
 <span id="137">137</span>
 <span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
 </pre><pre class="rust">
 <span class="comment">// Copyright 2019-2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// This file is part of Cumulus.</span>
@@ -193,6 +196,9 @@
 	<span class="doccomment">/// The custom benchmark subcommmand benchmarking runtime pallets.</span>
 	<span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;benchmark&quot;</span>, <span class="ident">about</span> <span class="op">=</span> <span class="string">&quot;Benchmark runtime pallets.&quot;</span>)]</span>
 	<span class="ident">Benchmark</span>(<span class="ident">frame_benchmarking_cli::BenchmarkCmd</span>),
+
+	<span class="doccomment">/// Key management CLI utilities</span>
+	<span class="ident">Key</span>(<span class="ident">sc_cli::KeySubcommand</span>),
 }
 
 <span class="doccomment">/// Command for exporting the genesis state of the parachain</span>

@@ -653,6 +653,62 @@
 <span id="653">653</span>
 <span id="654">654</span>
 <span id="655">655</span>
+<span id="656">656</span>
+<span id="657">657</span>
+<span id="658">658</span>
+<span id="659">659</span>
+<span id="660">660</span>
+<span id="661">661</span>
+<span id="662">662</span>
+<span id="663">663</span>
+<span id="664">664</span>
+<span id="665">665</span>
+<span id="666">666</span>
+<span id="667">667</span>
+<span id="668">668</span>
+<span id="669">669</span>
+<span id="670">670</span>
+<span id="671">671</span>
+<span id="672">672</span>
+<span id="673">673</span>
+<span id="674">674</span>
+<span id="675">675</span>
+<span id="676">676</span>
+<span id="677">677</span>
+<span id="678">678</span>
+<span id="679">679</span>
+<span id="680">680</span>
+<span id="681">681</span>
+<span id="682">682</span>
+<span id="683">683</span>
+<span id="684">684</span>
+<span id="685">685</span>
+<span id="686">686</span>
+<span id="687">687</span>
+<span id="688">688</span>
+<span id="689">689</span>
+<span id="690">690</span>
+<span id="691">691</span>
+<span id="692">692</span>
+<span id="693">693</span>
+<span id="694">694</span>
+<span id="695">695</span>
+<span id="696">696</span>
+<span id="697">697</span>
+<span id="698">698</span>
+<span id="699">699</span>
+<span id="700">700</span>
+<span id="701">701</span>
+<span id="702">702</span>
+<span id="703">703</span>
+<span id="704">704</span>
+<span id="705">705</span>
+<span id="706">706</span>
+<span id="707">707</span>
+<span id="708">708</span>
+<span id="709">709</span>
+<span id="710">710</span>
+<span id="711">711</span>
 </pre><pre class="rust">
 <span class="comment">// Copyright 2019-2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// This file is part of Cumulus.</span>
@@ -701,13 +757,23 @@
 	},
 	<span class="ident">StorageValue</span>,
 };
-<span class="kw">use</span> <span class="ident">frame_system::limits</span>::{<span class="ident">BlockLength</span>, <span class="ident">BlockWeights</span>};
+<span class="kw">use</span> <span class="ident">frame_system</span>::{
+	<span class="ident">limits</span>::{<span class="ident">BlockLength</span>, <span class="ident">BlockWeights</span>},
+	<span class="ident">EnsureOneOf</span>, <span class="ident">EnsureRoot</span>,
+};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">pallet_balances::Call</span> <span class="kw">as</span> <span class="ident">BalancesCall</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">pallet_timestamp::Call</span> <span class="kw">as</span> <span class="ident">TimestampCall</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sp_consensus_aura::sr25519::AuthorityId</span> <span class="kw">as</span> <span class="ident">AuraId</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>, <span class="ident">test</span>))]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sp_runtime::BuildStorage</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sp_runtime</span>::{<span class="ident">Perbill</span>, <span class="ident">Permill</span>};
+
+<span class="kw">use</span> <span class="ident">parachains_common</span>::{
+	<span class="ident">impls</span>::{<span class="ident">AssetsFrom</span>, <span class="ident">NonZeroIssuance</span>},
+	<span class="ident">AssetId</span>,
+};
+<span class="kw">use</span> <span class="ident">xcm_builder</span>::{<span class="ident">AsPrefixedGeneralIndex</span>, <span class="ident">ConvertedConcreteAssetId</span>, <span class="ident">FungiblesAdapter</span>};
+<span class="kw">use</span> <span class="ident">xcm_executor::traits::JustTry</span>;
 
 <span class="comment">// XCM imports</span>
 <span class="kw">use</span> <span class="ident">pallet_xcm</span>::{<span class="ident">EnsureXcm</span>, <span class="ident">IsMajorityOfBody</span>, <span class="ident">XcmPassthrough</span>};
@@ -877,11 +943,16 @@
 
 <span class="kw">impl</span> <span class="ident">pallet_randomness_collective_flip::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {}
 
+<span class="macro">parameter_types!</span> {
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">OperationalFeeMultiplier</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">5</span>;
+}
+
 <span class="kw">impl</span> <span class="ident">pallet_transaction_payment::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
 	<span class="kw">type</span> <span class="ident">OnChargeTransaction</span> <span class="op">=</span> <span class="ident">pallet_transaction_payment::CurrencyAdapter</span><span class="op">&lt;</span><span class="ident">Balances</span>, ()<span class="op">&gt;</span>;
 	<span class="kw">type</span> <span class="ident">TransactionByteFee</span> <span class="op">=</span> <span class="ident">TransactionByteFee</span>;
 	<span class="kw">type</span> <span class="ident">WeightToFee</span> <span class="op">=</span> <span class="ident">IdentityFee</span><span class="op">&lt;</span><span class="ident">Balance</span><span class="op">&gt;</span>;
 	<span class="kw">type</span> <span class="ident">FeeMultiplierUpdate</span> <span class="op">=</span> ();
+	<span class="kw">type</span> <span class="ident">OperationalFeeMultiplier</span> <span class="op">=</span> <span class="ident">OperationalFeeMultiplier</span>;
 }
 
 <span class="kw">impl</span> <span class="ident">pallet_sudo::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
@@ -914,6 +985,7 @@
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RococoNetwork</span>: <span class="ident">NetworkId</span> <span class="op">=</span> <span class="ident">NetworkId::Polkadot</span>;
 	<span class="kw">pub</span> <span class="ident">RelayChainOrigin</span>: <span class="ident">Origin</span> <span class="op">=</span> <span class="ident">cumulus_pallet_xcm::Origin::Relay</span>.<span class="ident">into</span>();
 	<span class="kw">pub</span> <span class="ident">Ancestry</span>: <span class="ident">MultiLocation</span> <span class="op">=</span> <span class="ident">Parachain</span>(<span class="ident">ParachainInfo::parachain_id</span>().<span class="ident">into</span>()).<span class="ident">into</span>();
+	<span class="kw">pub</span> <span class="ident">CheckingAccount</span>: <span class="ident">AccountId</span> <span class="op">=</span> <span class="ident">PolkadotXcm::check_account</span>();
 }
 
 <span class="doccomment">/// Type for specifying how a `MultiLocation` can be converted into an `AccountId`. This is used</span>
@@ -929,7 +1001,7 @@
 );
 
 <span class="doccomment">/// Means for transacting assets on this chain.</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">LocalAssetTransactor</span> <span class="op">=</span> <span class="ident">CurrencyAdapter</span><span class="op">&lt;</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">CurrencyTransactor</span> <span class="op">=</span> <span class="ident">CurrencyAdapter</span><span class="op">&lt;</span>
 	<span class="comment">// Use this currency:</span>
 	<span class="ident">Balances</span>,
 	<span class="comment">// Use this currency when it is a fungible asset matching the given location or name:</span>
@@ -941,6 +1013,30 @@
 	<span class="comment">// We don&#39;t track any teleports.</span>
 	(),
 <span class="op">&gt;</span>;
+
+<span class="doccomment">/// Means for transacting assets besides the native currency on this chain.</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">FungiblesTransactor</span> <span class="op">=</span> <span class="ident">FungiblesAdapter</span><span class="op">&lt;</span>
+	<span class="comment">// Use this fungibles implementation:</span>
+	<span class="ident">Assets</span>,
+	<span class="comment">// Use this currency when it is a fungible asset matching the given location or name:</span>
+	<span class="ident">ConvertedConcreteAssetId</span><span class="op">&lt;</span>
+		<span class="ident">AssetId</span>,
+		<span class="ident">u64</span>,
+		<span class="ident">AsPrefixedGeneralIndex</span><span class="op">&lt;</span><span class="ident">StatemintLocation</span>, <span class="ident">AssetId</span>, <span class="ident">JustTry</span><span class="op">&gt;</span>,
+		<span class="ident">JustTry</span>,
+	<span class="op">&gt;</span>,
+	<span class="comment">// Convert an XCM MultiLocation into a local account id:</span>
+	<span class="ident">LocationToAccountId</span>,
+	<span class="comment">// Our chain&#39;s account ID type (we can&#39;t get away without mentioning it explicitly):</span>
+	<span class="ident">AccountId</span>,
+	<span class="comment">// We only want to allow teleports of known assets. We use non-zero issuance as an indication</span>
+	<span class="comment">// that this asset is known.</span>
+	<span class="ident">NonZeroIssuance</span><span class="op">&lt;</span><span class="ident">AccountId</span>, <span class="ident">Assets</span><span class="op">&gt;</span>,
+	<span class="comment">// The account to use for tracking teleports.</span>
+	<span class="ident">CheckingAccount</span>,
+<span class="op">&gt;</span>;
+<span class="doccomment">/// Means for transacting assets on this chain.</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">AssetTransactors</span> <span class="op">=</span> (<span class="ident">CurrencyTransactor</span>, <span class="ident">FungiblesTransactor</span>);
 
 <span class="doccomment">/// This is the type we use to convert an (incoming) XCM origin into a local `Origin` instance,</span>
 <span class="doccomment">/// ready for dispatching a transaction with Xcm&#39;s `Transact`. There is an `OriginKind` which can</span>
@@ -980,22 +1076,34 @@
 		<span class="ident">MultiLocation</span> { <span class="ident">parents</span>: <span class="number">1</span>, <span class="ident">interior</span>: <span class="ident">X1</span>(<span class="ident">Plurality</span> { <span class="ident">id</span>: <span class="ident">BodyId::Unit</span>, .. }) }
 	};
 }
+<span class="macro">match_type!</span> {
+	<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Statemint</span>: <span class="kw">impl</span> <span class="ident">Contains</span><span class="op">&lt;</span><span class="ident">MultiLocation</span><span class="op">&gt;</span> <span class="op">=</span> {
+		<span class="ident">MultiLocation</span> { <span class="ident">parents</span>: <span class="number">1</span>, <span class="ident">interior</span>: <span class="ident">X1</span>(<span class="ident">Parachain</span>(<span class="number">1000</span>)) }
+	};
+}
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Barrier</span> <span class="op">=</span> (
 	<span class="ident">TakeWeightCredit</span>,
 	<span class="ident">AllowTopLevelPaidExecutionFrom</span><span class="op">&lt;</span><span class="ident">Everything</span><span class="op">&gt;</span>,
 	<span class="ident">AllowUnpaidExecutionFrom</span><span class="op">&lt;</span><span class="ident">ParentOrParentsUnitPlurality</span><span class="op">&gt;</span>,
 	<span class="comment">// ^^^ Parent &amp; its unit plurality gets free execution</span>
+	<span class="ident">AllowUnpaidExecutionFrom</span><span class="op">&lt;</span><span class="ident">Statemint</span><span class="op">&gt;</span>,
 );
+
+<span class="macro">parameter_types!</span> {
+	<span class="kw">pub</span> <span class="ident">StatemintLocation</span>: <span class="ident">MultiLocation</span> <span class="op">=</span> <span class="ident">MultiLocation::new</span>(<span class="number">1</span>, <span class="ident">X1</span>(<span class="ident">Parachain</span>(<span class="number">1000</span>)));
+}
+
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Reserves</span> <span class="op">=</span> (<span class="ident">NativeAsset</span>, <span class="ident">AssetsFrom</span><span class="op">&lt;</span><span class="ident">StatemintLocation</span><span class="op">&gt;</span>);
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">XcmConfig</span>;
 <span class="kw">impl</span> <span class="ident">Config</span> <span class="kw">for</span> <span class="ident">XcmConfig</span> {
 	<span class="kw">type</span> <span class="ident">Call</span> <span class="op">=</span> <span class="ident">Call</span>;
 	<span class="kw">type</span> <span class="ident">XcmSender</span> <span class="op">=</span> <span class="ident">XcmRouter</span>;
 	<span class="comment">// How to withdraw and deposit an asset.</span>
-	<span class="kw">type</span> <span class="ident">AssetTransactor</span> <span class="op">=</span> <span class="ident">LocalAssetTransactor</span>;
+	<span class="kw">type</span> <span class="ident">AssetTransactor</span> <span class="op">=</span> <span class="ident">AssetTransactors</span>;
 	<span class="kw">type</span> <span class="ident">OriginConverter</span> <span class="op">=</span> <span class="ident">XcmOriginToTransactDispatchOrigin</span>;
-	<span class="kw">type</span> <span class="ident">IsReserve</span> <span class="op">=</span> <span class="ident">NativeAsset</span>;
+	<span class="kw">type</span> <span class="ident">IsReserve</span> <span class="op">=</span> <span class="ident">Reserves</span>;
 	<span class="kw">type</span> <span class="ident">IsTeleporter</span> <span class="op">=</span> <span class="ident">NativeAsset</span>; <span class="comment">// &lt;- should be enough to allow teleportation of ROC</span>
 	<span class="kw">type</span> <span class="ident">LocationInverter</span> <span class="op">=</span> <span class="ident">LocationInverter</span><span class="op">&lt;</span><span class="ident">Ancestry</span><span class="op">&gt;</span>;
 	<span class="kw">type</span> <span class="ident">Barrier</span> <span class="op">=</span> <span class="ident">Barrier</span>;
@@ -1072,12 +1180,16 @@
 }
 
 <span class="doccomment">/// A majority of the Unit body from Rococo over XCM is our required administration origin.</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">AdminOrigin</span> <span class="op">=</span> <span class="ident">EnsureXcm</span><span class="op">&lt;</span><span class="ident">IsMajorityOfBody</span><span class="op">&lt;</span><span class="ident">RocLocation</span>, <span class="ident">UnitBody</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">AdminOrigin</span> <span class="op">=</span> <span class="ident">EnsureOneOf</span><span class="op">&lt;</span>
+	<span class="ident">AccountId</span>,
+	<span class="ident">EnsureRoot</span><span class="op">&lt;</span><span class="ident">AccountId</span><span class="op">&gt;</span>,
+	<span class="ident">EnsureXcm</span><span class="op">&lt;</span><span class="ident">IsMajorityOfBody</span><span class="op">&lt;</span><span class="ident">RocLocation</span>, <span class="ident">UnitBody</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+<span class="op">&gt;</span>;
 
 <span class="kw">impl</span> <span class="ident">pallet_assets::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
 	<span class="kw">type</span> <span class="ident">Event</span> <span class="op">=</span> <span class="ident">Event</span>;
 	<span class="kw">type</span> <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">u64</span>;
-	<span class="kw">type</span> <span class="ident">AssetId</span> <span class="op">=</span> <span class="ident">u32</span>;
+	<span class="kw">type</span> <span class="ident">AssetId</span> <span class="op">=</span> <span class="ident">AssetId</span>;
 	<span class="kw">type</span> <span class="ident">Currency</span> <span class="op">=</span> <span class="ident">Balances</span>;
 	<span class="kw">type</span> <span class="ident">ForceOrigin</span> <span class="op">=</span> <span class="ident">AdminOrigin</span>;
 	<span class="kw">type</span> <span class="ident">AssetDeposit</span> <span class="op">=</span> <span class="ident">AssetDeposit</span>;

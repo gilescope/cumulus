@@ -1028,7 +1028,7 @@
 					<span class="prelude-val">Ok</span>(<span class="number">0</span>)
 				},
 				<span class="prelude-val">Ok</span>(<span class="prelude-val">Ok</span>(<span class="ident">x</span>)) <span class="op">=</span><span class="op">&gt;</span> {
-					<span class="kw">let</span> <span class="ident">outcome</span> <span class="op">=</span> <span class="ident">T::XcmExecutor::execute_xcm</span>(<span class="ident">Parent</span>.<span class="ident">into</span>(), <span class="ident">x</span>, <span class="ident">limit</span>);
+					<span class="kw">let</span> <span class="ident">outcome</span> <span class="op">=</span> <span class="ident">T::XcmExecutor::execute_xcm</span>(<span class="ident">Parent</span>, <span class="ident">x</span>, <span class="ident">limit</span>);
 					<span class="kw">match</span> <span class="ident">outcome</span> {
 						<span class="ident">Outcome::Error</span>(<span class="ident">XcmError::WeightLimitReached</span>(<span class="ident">required</span>)) <span class="op">=</span><span class="op">&gt;</span>
 							<span class="prelude-val">Err</span>((<span class="ident">id</span>, <span class="ident">required</span>)),
@@ -1208,7 +1208,7 @@
 	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MockExec</span>;
 	<span class="kw">impl</span> <span class="ident">ExecuteXcm</span><span class="op">&lt;</span><span class="ident">Call</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">MockExec</span> {
 		<span class="kw">fn</span> <span class="ident">execute_xcm_in_credit</span>(
-			<span class="ident">_origin</span>: <span class="ident">MultiLocation</span>,
+			<span class="ident">_origin</span>: <span class="kw">impl</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">MultiLocation</span><span class="op">&gt;</span>,
 			<span class="ident">message</span>: <span class="ident">Xcm</span>,
 			<span class="ident">weight_limit</span>: <span class="ident">Weight</span>,
 			<span class="ident">_credit</span>: <span class="ident">Weight</span>,

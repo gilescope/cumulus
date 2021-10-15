@@ -944,6 +944,33 @@
 <span id="944">944</span>
 <span id="945">945</span>
 <span id="946">946</span>
+<span id="947">947</span>
+<span id="948">948</span>
+<span id="949">949</span>
+<span id="950">950</span>
+<span id="951">951</span>
+<span id="952">952</span>
+<span id="953">953</span>
+<span id="954">954</span>
+<span id="955">955</span>
+<span id="956">956</span>
+<span id="957">957</span>
+<span id="958">958</span>
+<span id="959">959</span>
+<span id="960">960</span>
+<span id="961">961</span>
+<span id="962">962</span>
+<span id="963">963</span>
+<span id="964">964</span>
+<span id="965">965</span>
+<span id="966">966</span>
+<span id="967">967</span>
+<span id="968">968</span>
+<span id="969">969</span>
+<span id="970">970</span>
+<span id="971">971</span>
+<span id="972">972</span>
+<span id="973">973</span>
 </pre><pre class="rust">
 <span class="comment">// Copyright (C) 2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0</span>
@@ -976,7 +1003,7 @@
 <span class="kw">use</span> <span class="ident">sp_core</span>::{<span class="ident">crypto::KeyTypeId</span>, <span class="ident">OpaqueMetadata</span>};
 <span class="kw">use</span> <span class="ident">sp_runtime</span>::{
 	<span class="ident">create_runtime_str</span>, <span class="ident">generic</span>, <span class="ident">impl_opaque_keys</span>,
-	<span class="ident">traits</span>::{<span class="ident">AccountIdLookup</span>, <span class="ident">BlakeTwo256</span>, <span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>},
+	<span class="ident">traits</span>::{<span class="ident">AccountIdLookup</span>, <span class="ident">BlakeTwo256</span>, <span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">ConvertInto</span>},
 	<span class="ident">transaction_validity</span>::{<span class="ident">TransactionSource</span>, <span class="ident">TransactionValidity</span>},
 	<span class="ident">ApplyExtrinsicResult</span>,
 };
@@ -1003,11 +1030,10 @@
 };
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">parachains_common</span> <span class="kw">as</span> <span class="ident">common</span>;
 <span class="kw">use</span> <span class="ident">parachains_common</span>::{
-	<span class="ident">impls::DealWithFees</span>, <span class="ident">opaque</span>, <span class="ident">AccountId</span>, <span class="ident">AuraId</span>, <span class="ident">Balance</span>, <span class="ident">BlockNumber</span>, <span class="ident">Hash</span>, <span class="ident">Header</span>, <span class="ident">Index</span>,
-	<span class="ident">Signature</span>, <span class="ident">AVERAGE_ON_INITIALIZE_RATIO</span>, <span class="ident">HOURS</span>, <span class="ident">MAXIMUM_BLOCK_WEIGHT</span>, <span class="ident">NORMAL_DISPATCH_RATIO</span>,
-	<span class="ident">SLOT_DURATION</span>,
+	<span class="ident">impls</span>::{<span class="ident">AssetsToBlockAuthor</span>, <span class="ident">DealWithFees</span>, <span class="ident">NonZeroIssuance</span>},
+	<span class="ident">opaque</span>, <span class="ident">AccountId</span>, <span class="ident">AssetId</span>, <span class="ident">AuraId</span>, <span class="ident">Balance</span>, <span class="ident">BlockNumber</span>, <span class="ident">Hash</span>, <span class="ident">Header</span>, <span class="ident">Index</span>, <span class="ident">Signature</span>,
+	<span class="ident">AVERAGE_ON_INITIALIZE_RATIO</span>, <span class="ident">HOURS</span>, <span class="ident">MAXIMUM_BLOCK_WEIGHT</span>, <span class="ident">NORMAL_DISPATCH_RATIO</span>, <span class="ident">SLOT_DURATION</span>,
 };
-<span class="kw">use</span> <span class="ident">sp_runtime::Perbill</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>, <span class="ident">test</span>))]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sp_runtime::BuildStorage</span>;
@@ -1018,13 +1044,14 @@
 <span class="kw">use</span> <span class="ident">polkadot_runtime_common</span>::{<span class="ident">BlockHashCount</span>, <span class="ident">RocksDbWeight</span>, <span class="ident">SlowAdjustingFeeUpdate</span>};
 <span class="kw">use</span> <span class="ident">xcm::latest::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">xcm_builder</span>::{
-	<span class="ident">AccountId32Aliases</span>, <span class="ident">AllowTopLevelPaidExecutionFrom</span>, <span class="ident">AllowUnpaidExecutionFrom</span>, <span class="ident">CurrencyAdapter</span>,
-	<span class="ident">EnsureXcmOrigin</span>, <span class="ident">FixedWeightBounds</span>, <span class="ident">IsConcrete</span>, <span class="ident">LocationInverter</span>, <span class="ident">NativeAsset</span>,
+	<span class="ident">AccountId32Aliases</span>, <span class="ident">AllowTopLevelPaidExecutionFrom</span>, <span class="ident">AllowUnpaidExecutionFrom</span>,
+	<span class="ident">AsPrefixedGeneralIndex</span>, <span class="ident">ConvertedConcreteAssetId</span>, <span class="ident">CurrencyAdapter</span>, <span class="ident">EnsureXcmOrigin</span>,
+	<span class="ident">FixedWeightBounds</span>, <span class="ident">FungiblesAdapter</span>, <span class="ident">IsConcrete</span>, <span class="ident">LocationInverter</span>, <span class="ident">NativeAsset</span>,
 	<span class="ident">ParentAsSuperuser</span>, <span class="ident">ParentIsDefault</span>, <span class="ident">RelayChainAsNative</span>, <span class="ident">SiblingParachainAsNative</span>,
 	<span class="ident">SiblingParachainConvertsVia</span>, <span class="ident">SignedAccountId32AsNative</span>, <span class="ident">SignedToAccountId32</span>,
 	<span class="ident">SovereignSignedViaLocation</span>, <span class="ident">TakeWeightCredit</span>, <span class="ident">UsingComponents</span>,
 };
-<span class="kw">use</span> <span class="ident">xcm_executor</span>::{<span class="ident">Config</span>, <span class="ident">XcmExecutor</span>};
+<span class="kw">use</span> <span class="ident">xcm_executor</span>::{<span class="ident">traits::JustTry</span>, <span class="ident">Config</span>, <span class="ident">XcmExecutor</span>};
 
 <span class="macro">impl_opaque_keys!</span> {
 	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SessionKeys</span> {
@@ -1037,10 +1064,10 @@
 	<span class="ident">spec_name</span>: <span class="macro">create_runtime_str!</span>(<span class="string">&quot;westmint&quot;</span>),
 	<span class="ident">impl_name</span>: <span class="macro">create_runtime_str!</span>(<span class="string">&quot;westmint&quot;</span>),
 	<span class="ident">authoring_version</span>: <span class="number">1</span>,
-	<span class="ident">spec_version</span>: <span class="number">3</span>,
+	<span class="ident">spec_version</span>: <span class="number">5</span>,
 	<span class="ident">impl_version</span>: <span class="number">0</span>,
 	<span class="ident">apis</span>: <span class="ident">RUNTIME_API_VERSIONS</span>,
-	<span class="ident">transaction_version</span>: <span class="number">1</span>,
+	<span class="ident">transaction_version</span>: <span class="number">3</span>,
 };
 
 <span class="doccomment">/// The version information used to identify this runtime when compiled natively.</span>
@@ -1147,6 +1174,7 @@
 <span class="macro">parameter_types!</span> {
 	<span class="doccomment">/// Relay Chain `TransactionByteFee` / 10</span>
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">TransactionByteFee</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="number">1</span> <span class="op">*</span> <span class="ident">MILLICENTS</span>;
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">OperationalFeeMultiplier</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">5</span>;
 }
 
 <span class="kw">impl</span> <span class="ident">pallet_transaction_payment::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
@@ -1155,6 +1183,7 @@
 	<span class="kw">type</span> <span class="ident">TransactionByteFee</span> <span class="op">=</span> <span class="ident">TransactionByteFee</span>;
 	<span class="kw">type</span> <span class="ident">WeightToFee</span> <span class="op">=</span> <span class="ident">WeightToFee</span>;
 	<span class="kw">type</span> <span class="ident">FeeMultiplierUpdate</span> <span class="op">=</span> <span class="ident">SlowAdjustingFeeUpdate</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>;
+	<span class="kw">type</span> <span class="ident">OperationalFeeMultiplier</span> <span class="op">=</span> <span class="ident">OperationalFeeMultiplier</span>;
 }
 
 <span class="kw">impl</span> <span class="ident">pallet_randomness_collective_flip::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {}
@@ -1167,7 +1196,7 @@
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">AssetsForceOrigin</span> <span class="op">=</span> <span class="ident">EnsureRoot</span><span class="op">&lt;</span><span class="ident">AccountId</span><span class="op">&gt;</span>;
 
 <span class="macro">parameter_types!</span> {
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">AssetDeposit</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="number">100</span> <span class="op">*</span> <span class="ident">UNITS</span>; <span class="comment">// 100 WND deposit to create asset</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">AssetDeposit</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="number">1</span> <span class="op">*</span> <span class="ident">UNITS</span>; <span class="comment">// 1 WND deposit to create asset</span>
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ApprovalDeposit</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">EXISTENTIAL_DEPOSIT</span>;
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">AssetsStringLimit</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">50</span>;
 	<span class="doccomment">/// Key = 32 bytes, Value = 36 bytes (32+1+1+1+1)</span>
@@ -1179,7 +1208,7 @@
 <span class="kw">impl</span> <span class="ident">pallet_assets::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
 	<span class="kw">type</span> <span class="ident">Event</span> <span class="op">=</span> <span class="ident">Event</span>;
 	<span class="kw">type</span> <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">Balance</span>;
-	<span class="kw">type</span> <span class="ident">AssetId</span> <span class="op">=</span> <span class="ident">u32</span>;
+	<span class="kw">type</span> <span class="ident">AssetId</span> <span class="op">=</span> <span class="ident">AssetId</span>;
 	<span class="kw">type</span> <span class="ident">Currency</span> <span class="op">=</span> <span class="ident">Balances</span>;
 	<span class="kw">type</span> <span class="ident">ForceOrigin</span> <span class="op">=</span> <span class="ident">AssetsForceOrigin</span>;
 	<span class="kw">type</span> <span class="ident">AssetDeposit</span> <span class="op">=</span> <span class="ident">AssetDeposit</span>;
@@ -1376,6 +1405,8 @@
 	<span class="kw">pub</span> <span class="ident">RelayNetwork</span>: <span class="ident">NetworkId</span> <span class="op">=</span> <span class="ident">NetworkId::Named</span>(<span class="string">b&quot;Westend&quot;</span>.<span class="ident">to_vec</span>());
 	<span class="kw">pub</span> <span class="ident">RelayChainOrigin</span>: <span class="ident">Origin</span> <span class="op">=</span> <span class="ident">cumulus_pallet_xcm::Origin::Relay</span>.<span class="ident">into</span>();
 	<span class="kw">pub</span> <span class="ident">Ancestry</span>: <span class="ident">MultiLocation</span> <span class="op">=</span> <span class="ident">Parachain</span>(<span class="ident">ParachainInfo::parachain_id</span>().<span class="ident">into</span>()).<span class="ident">into</span>();
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">Local</span>: <span class="ident">MultiLocation</span> <span class="op">=</span> <span class="ident">Here</span>.<span class="ident">into</span>();
+	<span class="kw">pub</span> <span class="ident">CheckingAccount</span>: <span class="ident">AccountId</span> <span class="op">=</span> <span class="ident">PolkadotXcm::check_account</span>();
 }
 
 <span class="doccomment">/// Type for specifying how a `MultiLocation` can be converted into an `AccountId`. This is used</span>
@@ -1390,19 +1421,43 @@
 	<span class="ident">AccountId32Aliases</span><span class="op">&lt;</span><span class="ident">RelayNetwork</span>, <span class="ident">AccountId</span><span class="op">&gt;</span>,
 );
 
-<span class="doccomment">/// Means for transacting assets on this chain.</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">LocalAssetTransactor</span> <span class="op">=</span> <span class="ident">CurrencyAdapter</span><span class="op">&lt;</span>
+<span class="doccomment">/// Means for transacting the native currency on this chain.</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">CurrencyTransactor</span> <span class="op">=</span> <span class="ident">CurrencyAdapter</span><span class="op">&lt;</span>
 	<span class="comment">// Use this currency:</span>
 	<span class="ident">Balances</span>,
 	<span class="comment">// Use this currency when it is a fungible asset matching the given location or name:</span>
 	<span class="ident">IsConcrete</span><span class="op">&lt;</span><span class="ident">WestendLocation</span><span class="op">&gt;</span>,
-	<span class="comment">// Do a simple punn to convert an AccountId32 MultiLocation into a native chain account ID:</span>
+	<span class="comment">// Convert an XCM MultiLocation into a local account id:</span>
 	<span class="ident">LocationToAccountId</span>,
 	<span class="comment">// Our chain&#39;s account ID type (we can&#39;t get away without mentioning it explicitly):</span>
 	<span class="ident">AccountId</span>,
-	<span class="comment">// We don&#39;t track any teleports.</span>
+	<span class="comment">// We don&#39;t track any teleports of `Balances`.</span>
 	(),
 <span class="op">&gt;</span>;
+
+<span class="doccomment">/// Means for transacting assets besides the native currency on this chain.</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">FungiblesTransactor</span> <span class="op">=</span> <span class="ident">FungiblesAdapter</span><span class="op">&lt;</span>
+	<span class="comment">// Use this fungibles implementation:</span>
+	<span class="ident">Assets</span>,
+	<span class="comment">// Use this currency when it is a fungible asset matching the given location or name:</span>
+	<span class="ident">ConvertedConcreteAssetId</span><span class="op">&lt;</span>
+		<span class="ident">AssetId</span>,
+		<span class="ident">Balance</span>,
+		<span class="ident">AsPrefixedGeneralIndex</span><span class="op">&lt;</span><span class="ident">Local</span>, <span class="ident">AssetId</span>, <span class="ident">JustTry</span><span class="op">&gt;</span>,
+		<span class="ident">JustTry</span>,
+	<span class="op">&gt;</span>,
+	<span class="comment">// Convert an XCM MultiLocation into a local account id:</span>
+	<span class="ident">LocationToAccountId</span>,
+	<span class="comment">// Our chain&#39;s account ID type (we can&#39;t get away without mentioning it explicitly):</span>
+	<span class="ident">AccountId</span>,
+	<span class="comment">// We only want to allow teleports of known assets. We use non-zero issuance as an indication</span>
+	<span class="comment">// that this asset is known.</span>
+	<span class="ident">NonZeroIssuance</span><span class="op">&lt;</span><span class="ident">AccountId</span>, <span class="ident">Assets</span><span class="op">&gt;</span>,
+	<span class="comment">// The account to use for tracking teleports.</span>
+	<span class="ident">CheckingAccount</span>,
+<span class="op">&gt;</span>;
+<span class="doccomment">/// Means for transacting assets on this chain.</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">AssetTransactors</span> <span class="op">=</span> (<span class="ident">CurrencyTransactor</span>, <span class="ident">FungiblesTransactor</span>);
 
 <span class="doccomment">/// This is the type we use to convert an (incoming) XCM origin into a local `Origin` instance,</span>
 <span class="doccomment">/// ready for dispatching a transaction with Xcm&#39;s `Transact`. There is an `OriginKind` which can</span>
@@ -1451,8 +1506,7 @@
 <span class="kw">impl</span> <span class="ident">Config</span> <span class="kw">for</span> <span class="ident">XcmConfig</span> {
 	<span class="kw">type</span> <span class="ident">Call</span> <span class="op">=</span> <span class="ident">Call</span>;
 	<span class="kw">type</span> <span class="ident">XcmSender</span> <span class="op">=</span> <span class="ident">XcmRouter</span>;
-	<span class="comment">// How to withdraw and deposit an asset.</span>
-	<span class="kw">type</span> <span class="ident">AssetTransactor</span> <span class="op">=</span> <span class="ident">LocalAssetTransactor</span>;
+	<span class="kw">type</span> <span class="ident">AssetTransactor</span> <span class="op">=</span> <span class="ident">AssetTransactors</span>;
 	<span class="kw">type</span> <span class="ident">OriginConverter</span> <span class="op">=</span> <span class="ident">XcmOriginToTransactDispatchOrigin</span>;
 	<span class="kw">type</span> <span class="ident">IsReserve</span> <span class="op">=</span> <span class="ident">NativeAsset</span>;
 	<span class="kw">type</span> <span class="ident">IsTeleporter</span> <span class="op">=</span> <span class="ident">NativeAsset</span>; <span class="comment">// &lt;- should be enough to allow teleportation of WND</span>
@@ -1519,7 +1573,6 @@
 }
 
 <span class="macro">parameter_types!</span> {
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">DisabledValidatorsThreshold</span>: <span class="ident">Perbill</span> <span class="op">=</span> <span class="ident">Perbill::from_percent</span>(<span class="number">33</span>);
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">Period</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">6</span> <span class="op">*</span> <span class="ident">HOURS</span>;
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">Offset</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0</span>;
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MaxAuthorities</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">100_000</span>;
@@ -1536,7 +1589,6 @@
 	<span class="comment">// Essentially just Aura, but lets be pedantic.</span>
 	<span class="kw">type</span> <span class="ident">SessionHandler</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">SessionKeys</span> <span class="kw">as</span> <span class="ident">sp_runtime::traits::OpaqueKeys</span><span class="op">&gt;</span><span class="ident">::KeyTypeIdProviders</span>;
 	<span class="kw">type</span> <span class="ident">Keys</span> <span class="op">=</span> <span class="ident">SessionKeys</span>;
-	<span class="kw">type</span> <span class="ident">DisabledValidatorsThreshold</span> <span class="op">=</span> <span class="ident">DisabledValidatorsThreshold</span>;
 	<span class="kw">type</span> <span class="ident">WeightInfo</span> <span class="op">=</span> <span class="ident">weights::pallet_session::WeightInfo</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>;
 }
 
@@ -1568,6 +1620,14 @@
 	<span class="kw">type</span> <span class="ident">ValidatorIdOf</span> <span class="op">=</span> <span class="ident">pallet_collator_selection::IdentityCollator</span>;
 	<span class="kw">type</span> <span class="ident">ValidatorRegistration</span> <span class="op">=</span> <span class="ident">Session</span>;
 	<span class="kw">type</span> <span class="ident">WeightInfo</span> <span class="op">=</span> <span class="ident">weights::pallet_collator_selection::WeightInfo</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>;
+}
+
+<span class="kw">impl</span> <span class="ident">pallet_asset_tx_payment::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
+	<span class="kw">type</span> <span class="ident">Fungibles</span> <span class="op">=</span> <span class="ident">Assets</span>;
+	<span class="kw">type</span> <span class="ident">OnChargeAssetTransaction</span> <span class="op">=</span> <span class="ident">pallet_asset_tx_payment::FungiblesAdapter</span><span class="op">&lt;</span>
+		<span class="ident">pallet_assets::BalanceToAssetBalance</span><span class="op">&lt;</span><span class="ident">Balances</span>, <span class="ident">Runtime</span>, <span class="ident">ConvertInto</span><span class="op">&gt;</span>,
+		<span class="ident">AssetsToBlockAuthor</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>,
+	<span class="op">&gt;</span>;
 }
 
 <span class="macro">parameter_types!</span> {
@@ -1640,6 +1700,9 @@
 
 		<span class="comment">// More things for the main stage</span>
 		<span class="ident">Uniques</span>: <span class="ident">pallet_uniques</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Storage</span>, <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>},
+
+		<span class="comment">// More Monetary stuff</span>
+		<span class="ident">AssetTxPayment</span>: <span class="ident">pallet_asset_tx_payment</span>::{<span class="ident">Pallet</span>},
 	}
 );
 
@@ -1659,7 +1722,7 @@
 	<span class="ident">frame_system::CheckEra</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>,
 	<span class="ident">frame_system::CheckNonce</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>,
 	<span class="ident">frame_system::CheckWeight</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>,
-	<span class="ident">pallet_transaction_payment::ChargeTransactionPayment</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>,
+	<span class="ident">pallet_asset_tx_payment::ChargeAssetTxPayment</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>,
 );
 <span class="doccomment">/// Unchecked extrinsic type as expected by this runtime.</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">UncheckedExtrinsic</span> <span class="op">=</span> <span class="ident">generic::UncheckedExtrinsic</span><span class="op">&lt;</span><span class="ident">Address</span>, <span class="ident">Call</span>, <span class="ident">Signature</span>, <span class="ident">SignedExtra</span><span class="op">&gt;</span>;
@@ -1672,17 +1735,8 @@
 	<span class="ident">frame_system::ChainContext</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>,
 	<span class="ident">Runtime</span>,
 	<span class="ident">AllPallets</span>,
-	<span class="ident">OnRuntimeUpgrade</span>,
+	(),
 <span class="op">&gt;</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OnRuntimeUpgrade</span>;
-<span class="kw">impl</span> <span class="ident">frame_support::traits::OnRuntimeUpgrade</span> <span class="kw">for</span> <span class="ident">OnRuntimeUpgrade</span> {
-	<span class="kw">fn</span> <span class="ident">on_runtime_upgrade</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-		<span class="ident">frame_support::migrations::migrate_from_pallet_version_to_storage_version</span>::<span class="op">&lt;</span>
-			<span class="ident">AllPalletsWithSystem</span>,
-		<span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">RocksDbWeight::get</span>())
-	}
-}
 
 <span class="macro">impl_runtime_apis!</span> {
 	<span class="kw">impl</span> <span class="ident">sp_consensus_aura::AuraApi</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">AuraId</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
