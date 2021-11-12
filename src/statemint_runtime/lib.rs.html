@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polkadot-parachains&#x2F;statemint&#x2F;src&#x2F;lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../statemint_runtime/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input"name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polkadot-parachains&#x2F;statemint&#x2F;src&#x2F;lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../statemint_runtime/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -987,8 +987,17 @@
 <span id="987">987</span>
 <span id="988">988</span>
 <span id="989">989</span>
-</pre><pre class="rust">
-<span class="comment">// Copyright (C) 2021 Parity Technologies (UK) Ltd.</span>
+<span id="990">990</span>
+<span id="991">991</span>
+<span id="992">992</span>
+<span id="993">993</span>
+<span id="994">994</span>
+<span id="995">995</span>
+<span id="996">996</span>
+<span id="997">997</span>
+<span id="998">998</span>
+<span id="999">999</span>
+</pre><pre class="rust"><code><span class="comment">// Copyright (C) 2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0</span>
 
 <span class="comment">// Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
@@ -1060,12 +1069,12 @@
 <span class="kw">use</span> <span class="ident">polkadot_runtime_common</span>::{<span class="ident">BlockHashCount</span>, <span class="ident">RocksDbWeight</span>, <span class="ident">SlowAdjustingFeeUpdate</span>};
 <span class="kw">use</span> <span class="ident">xcm::latest::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">xcm_builder</span>::{
-	<span class="ident">AccountId32Aliases</span>, <span class="ident">AllowTopLevelPaidExecutionFrom</span>, <span class="ident">AllowUnpaidExecutionFrom</span>,
-	<span class="ident">AsPrefixedGeneralIndex</span>, <span class="ident">ConvertedConcreteAssetId</span>, <span class="ident">CurrencyAdapter</span>, <span class="ident">EnsureXcmOrigin</span>,
-	<span class="ident">FixedWeightBounds</span>, <span class="ident">FungiblesAdapter</span>, <span class="ident">IsConcrete</span>, <span class="ident">LocationInverter</span>, <span class="ident">NativeAsset</span>,
-	<span class="ident">ParentAsSuperuser</span>, <span class="ident">ParentIsDefault</span>, <span class="ident">RelayChainAsNative</span>, <span class="ident">SiblingParachainAsNative</span>,
-	<span class="ident">SiblingParachainConvertsVia</span>, <span class="ident">SignedAccountId32AsNative</span>, <span class="ident">SovereignSignedViaLocation</span>,
-	<span class="ident">TakeWeightCredit</span>, <span class="ident">UsingComponents</span>,
+	<span class="ident">AccountId32Aliases</span>, <span class="ident">AllowKnownQueryResponses</span>, <span class="ident">AllowSubscriptionsFrom</span>,
+	<span class="ident">AllowTopLevelPaidExecutionFrom</span>, <span class="ident">AllowUnpaidExecutionFrom</span>, <span class="ident">AsPrefixedGeneralIndex</span>,
+	<span class="ident">ConvertedConcreteAssetId</span>, <span class="ident">CurrencyAdapter</span>, <span class="ident">EnsureXcmOrigin</span>, <span class="ident">FixedWeightBounds</span>,
+	<span class="ident">FungiblesAdapter</span>, <span class="ident">IsConcrete</span>, <span class="ident">LocationInverter</span>, <span class="ident">NativeAsset</span>, <span class="ident">ParentAsSuperuser</span>,
+	<span class="ident">ParentIsDefault</span>, <span class="ident">RelayChainAsNative</span>, <span class="ident">SiblingParachainAsNative</span>, <span class="ident">SiblingParachainConvertsVia</span>,
+	<span class="ident">SignedAccountId32AsNative</span>, <span class="ident">SovereignSignedViaLocation</span>, <span class="ident">TakeWeightCredit</span>, <span class="ident">UsingComponents</span>,
 };
 <span class="kw">use</span> <span class="ident">xcm_executor</span>::{<span class="ident">traits::JustTry</span>, <span class="ident">Config</span>, <span class="ident">XcmExecutor</span>};
 
@@ -1080,10 +1089,10 @@
 	<span class="ident">spec_name</span>: <span class="macro">create_runtime_str!</span>(<span class="string">&quot;statemint&quot;</span>),
 	<span class="ident">impl_name</span>: <span class="macro">create_runtime_str!</span>(<span class="string">&quot;statemint&quot;</span>),
 	<span class="ident">authoring_version</span>: <span class="number">1</span>,
-	<span class="ident">spec_version</span>: <span class="number">100</span>,
+	<span class="ident">spec_version</span>: <span class="number">600</span>,
 	<span class="ident">impl_version</span>: <span class="number">0</span>,
 	<span class="ident">apis</span>: <span class="ident">RUNTIME_API_VERSIONS</span>,
-	<span class="ident">transaction_version</span>: <span class="number">2</span>,
+	<span class="ident">transaction_version</span>: <span class="number">3</span>,
 };
 
 <span class="doccomment">/// The version information used to identify this runtime when compiled natively.</span>
@@ -1214,8 +1223,6 @@
 	<span class="kw">type</span> <span class="ident">OperationalFeeMultiplier</span> <span class="op">=</span> <span class="ident">OperationalFeeMultiplier</span>;
 }
 
-<span class="kw">impl</span> <span class="ident">pallet_randomness_collective_flip::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {}
-
 <span class="macro">parameter_types!</span> {
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">AssetDeposit</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="number">100</span> <span class="op">*</span> <span class="ident">DOLLARS</span>; <span class="comment">// 100 DOLLARS deposit to create asset</span>
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ApprovalDeposit</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">EXISTENTIAL_DEPOSIT</span>;
@@ -1271,6 +1278,7 @@
 <span class="kw">impl</span> <span class="ident">pallet_utility::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
 	<span class="kw">type</span> <span class="ident">Event</span> <span class="op">=</span> <span class="ident">Event</span>;
 	<span class="kw">type</span> <span class="ident">Call</span> <span class="op">=</span> <span class="ident">Call</span>;
+	<span class="kw">type</span> <span class="ident">PalletsOrigin</span> <span class="op">=</span> <span class="ident">OriginCaller</span>;
 	<span class="kw">type</span> <span class="ident">WeightInfo</span> <span class="op">=</span> <span class="ident">weights::pallet_utility::WeightInfo</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>;
 }
 
@@ -1313,12 +1321,12 @@
 	<span class="ident">AssetOwner</span>,
 	<span class="doccomment">/// Asset manager. Can execute calls related to asset management.</span>
 	<span class="ident">AssetManager</span>,
-	<span class="comment">// Collator selection proxy. Can execute calls related to collator selection mechanism.</span>
+	<span class="doccomment">/// Collator selection proxy. Can execute calls related to collator selection mechanism.</span>
 	<span class="ident">Collator</span>,
 }
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">ProxyType</span> {
 	<span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-		<span class="self">Self</span><span class="ident">::Any</span>
+		<span class="ident"><span class="self">Self</span>::Any</span>
 	}
 }
 <span class="kw">impl</span> <span class="ident">InstanceFilter</span><span class="op">&lt;</span><span class="ident">Call</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ProxyType</span> {
@@ -1496,7 +1504,7 @@
 	<span class="comment">// using `LocationToAccountId` and then turn that into the usual `Signed` origin. Useful for</span>
 	<span class="comment">// foreign chains who want to have a local sovereign account on this chain which they control.</span>
 	<span class="ident">SovereignSignedViaLocation</span><span class="op">&lt;</span><span class="ident">LocationToAccountId</span>, <span class="ident">Origin</span><span class="op">&gt;</span>,
-	<span class="comment">// Native converter for Relay-chain (Parent) location; will converts to a `Relay` origin when</span>
+	<span class="comment">// Native converter for Relay-chain (Parent) location; will convert to a `Relay` origin when</span>
 	<span class="comment">// recognised.</span>
 	<span class="ident">RelayChainAsNative</span><span class="op">&lt;</span><span class="ident">RelayChainOrigin</span>, <span class="ident">Origin</span><span class="op">&gt;</span>,
 	<span class="comment">// Native converter for sibling Parachains; will convert to a `SiblingPara` origin when</span>
@@ -1513,8 +1521,8 @@
 );
 
 <span class="macro">parameter_types!</span> {
-	<span class="comment">// One XCM operation is 1_000_000 weight - almost certainly a conservative estimate.</span>
-	<span class="kw">pub</span> <span class="ident">UnitWeightCost</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="number">1_000_000</span>;
+	<span class="comment">// One XCM operation is 1_000_000_000 weight - almost certainly a conservative estimate.</span>
+	<span class="kw">pub</span> <span class="ident">UnitWeightCost</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="number">1_000_000_000</span>;
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MaxInstructions</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">100</span>;
 }
 
@@ -1524,12 +1532,22 @@
 		<span class="ident">MultiLocation</span> { <span class="ident">parents</span>: <span class="number">1</span>, <span class="ident">interior</span>: <span class="ident">X1</span>(<span class="ident">Plurality</span> { <span class="ident">id</span>: <span class="ident">BodyId::Executive</span>, .. }) }
 	};
 }
+<span class="macro">match_type!</span> {
+	<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ParentOrSiblings</span>: <span class="kw">impl</span> <span class="ident">Contains</span><span class="op">&lt;</span><span class="ident">MultiLocation</span><span class="op">&gt;</span> <span class="op">=</span> {
+		<span class="ident">MultiLocation</span> { <span class="ident">parents</span>: <span class="number">1</span>, <span class="ident">interior</span>: <span class="ident">Here</span> } <span class="op">|</span>
+		<span class="ident">MultiLocation</span> { <span class="ident">parents</span>: <span class="number">1</span>, <span class="ident">interior</span>: <span class="ident">X1</span>(<span class="kw">_</span>) }
+	};
+}
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Barrier</span> <span class="op">=</span> (
 	<span class="ident">TakeWeightCredit</span>,
 	<span class="ident">AllowTopLevelPaidExecutionFrom</span><span class="op">&lt;</span><span class="ident">Everything</span><span class="op">&gt;</span>,
+	<span class="comment">// Parent and its exec plurality get free execution</span>
 	<span class="ident">AllowUnpaidExecutionFrom</span><span class="op">&lt;</span><span class="ident">ParentOrParentsExecutivePlurality</span><span class="op">&gt;</span>,
-	<span class="comment">// ^^^ Parent and its exec plurality get free execution</span>
+	<span class="comment">// Expected responses are OK.</span>
+	<span class="ident">AllowKnownQueryResponses</span><span class="op">&lt;</span><span class="ident">PolkadotXcm</span><span class="op">&gt;</span>,
+	<span class="comment">// Subscriptions for version tracking are OK.</span>
+	<span class="ident">AllowSubscriptionsFrom</span><span class="op">&lt;</span><span class="ident">ParentOrSiblings</span><span class="op">&gt;</span>,
 );
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">XcmConfig</span>;
@@ -1561,7 +1579,7 @@
 <span class="doccomment">/// queues.</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">XcmRouter</span> <span class="op">=</span> (
 	<span class="comment">// Two routers - use UMP to communicate with the relay chain:</span>
-	<span class="ident">cumulus_primitives_utility::ParentAsUmp</span><span class="op">&lt;</span><span class="ident">ParachainSystem</span>, ()<span class="op">&gt;</span>,
+	<span class="ident">cumulus_primitives_utility::ParentAsUmp</span><span class="op">&lt;</span><span class="ident">ParachainSystem</span>, <span class="ident">PolkadotXcm</span><span class="op">&gt;</span>,
 	<span class="comment">// ..and XCMP to communicate with the sibling chains.</span>
 	<span class="ident">XcmpQueue</span>,
 );
@@ -1592,7 +1610,7 @@
 	<span class="kw">type</span> <span class="ident">Event</span> <span class="op">=</span> <span class="ident">Event</span>;
 	<span class="kw">type</span> <span class="ident">XcmExecutor</span> <span class="op">=</span> <span class="ident">XcmExecutor</span><span class="op">&lt;</span><span class="ident">XcmConfig</span><span class="op">&gt;</span>;
 	<span class="kw">type</span> <span class="ident">ChannelInfo</span> <span class="op">=</span> <span class="ident">ParachainSystem</span>;
-	<span class="kw">type</span> <span class="ident">VersionWrapper</span> <span class="op">=</span> ();
+	<span class="kw">type</span> <span class="ident">VersionWrapper</span> <span class="op">=</span> <span class="ident">PolkadotXcm</span>;
 }
 
 <span class="kw">impl</span> <span class="ident">cumulus_pallet_dmp_queue::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
@@ -1706,7 +1724,7 @@
 		<span class="ident">ParachainSystem</span>: <span class="ident">cumulus_pallet_parachain_system</span>::{
 			<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Config</span>, <span class="ident">Storage</span>, <span class="ident">Inherent</span>, <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">ValidateUnsigned</span>,
 		} <span class="op">=</span> <span class="number">1</span>,
-		<span class="ident">RandomnessCollectiveFlip</span>: <span class="ident">pallet_randomness_collective_flip</span>::{<span class="ident">Pallet</span>, <span class="ident">Storage</span>} <span class="op">=</span> <span class="number">2</span>,
+		<span class="comment">// RandomnessCollectiveFlip = 2 removed</span>
 		<span class="ident">Timestamp</span>: <span class="ident">pallet_timestamp</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Storage</span>, <span class="ident">Inherent</span>} <span class="op">=</span> <span class="number">3</span>,
 		<span class="ident">ParachainInfo</span>: <span class="ident">parachain_info</span>::{<span class="ident">Pallet</span>, <span class="ident">Storage</span>, <span class="ident">Config</span>} <span class="op">=</span> <span class="number">4</span>,
 
@@ -1715,7 +1733,7 @@
 		<span class="ident">TransactionPayment</span>: <span class="ident">pallet_transaction_payment</span>::{<span class="ident">Pallet</span>, <span class="ident">Storage</span>} <span class="op">=</span> <span class="number">11</span>,
 		<span class="ident">AssetTxPayment</span>: <span class="ident">pallet_asset_tx_payment</span>::{<span class="ident">Pallet</span>} <span class="op">=</span> <span class="number">12</span>,
 
-		<span class="comment">// Collator support. the order of these 4 are important and shall not change.</span>
+		<span class="comment">// Collator support. the order of these 5 are important and shall not change.</span>
 		<span class="ident">Authorship</span>: <span class="ident">pallet_authorship</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Storage</span>} <span class="op">=</span> <span class="number">20</span>,
 		<span class="ident">CollatorSelection</span>: <span class="ident">pallet_collator_selection</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Storage</span>, <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Config</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>} <span class="op">=</span> <span class="number">21</span>,
 		<span class="ident">Session</span>: <span class="ident">pallet_session</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Storage</span>, <span class="ident">Event</span>, <span class="ident">Config</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>} <span class="op">=</span> <span class="number">22</span>,
@@ -1724,7 +1742,7 @@
 
 		<span class="comment">// XCM helpers.</span>
 		<span class="ident">XcmpQueue</span>: <span class="ident">cumulus_pallet_xcmp_queue</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Storage</span>, <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>} <span class="op">=</span> <span class="number">30</span>,
-		<span class="ident">PolkadotXcm</span>: <span class="ident">pallet_xcm</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Origin</span>} <span class="op">=</span> <span class="number">31</span>,
+		<span class="ident">PolkadotXcm</span>: <span class="ident">pallet_xcm</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Storage</span>, <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Origin</span>} <span class="op">=</span> <span class="number">31</span>,
 		<span class="ident">CumulusXcm</span>: <span class="ident">cumulus_pallet_xcm</span>::{<span class="ident">Pallet</span>, <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Origin</span>} <span class="op">=</span> <span class="number">32</span>,
 		<span class="ident">DmpQueue</span>: <span class="ident">cumulus_pallet_dmp_queue</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Storage</span>, <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>} <span class="op">=</span> <span class="number">33</span>,
 
@@ -1733,7 +1751,7 @@
 		<span class="ident">Multisig</span>: <span class="ident">pallet_multisig</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Storage</span>, <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>} <span class="op">=</span> <span class="number">41</span>,
 		<span class="ident">Proxy</span>: <span class="ident">pallet_proxy</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Storage</span>, <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>} <span class="op">=</span> <span class="number">42</span>,
 
-		<span class="comment">// The main stage. To include pallet-assets-freezer and pallet-uniques.</span>
+		<span class="comment">// The main stage.</span>
 		<span class="ident">Assets</span>: <span class="ident">pallet_assets</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Storage</span>, <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>} <span class="op">=</span> <span class="number">50</span>,
 		<span class="ident">Uniques</span>: <span class="ident">pallet_uniques</span>::{<span class="ident">Pallet</span>, <span class="ident">Call</span>, <span class="ident">Storage</span>, <span class="ident">Event</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>} <span class="op">=</span> <span class="number">51</span>,
 	}
@@ -1939,6 +1957,7 @@
 			<span class="macro">add_benchmark!</span>(<span class="ident">params</span>, <span class="ident">batches</span>, <span class="ident">pallet_multisig</span>, <span class="ident">Multisig</span>);
 			<span class="macro">add_benchmark!</span>(<span class="ident">params</span>, <span class="ident">batches</span>, <span class="ident">pallet_proxy</span>, <span class="ident">Proxy</span>);
 			<span class="macro">add_benchmark!</span>(<span class="ident">params</span>, <span class="ident">batches</span>, <span class="ident">pallet_session</span>, <span class="ident">SessionBench</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>);
+			<span class="macro">add_benchmark!</span>(<span class="ident">params</span>, <span class="ident">batches</span>, <span class="ident">pallet_uniques</span>, <span class="ident">Uniques</span>);
 			<span class="macro">add_benchmark!</span>(<span class="ident">params</span>, <span class="ident">batches</span>, <span class="ident">pallet_utility</span>, <span class="ident">Utility</span>);
 			<span class="macro">add_benchmark!</span>(<span class="ident">params</span>, <span class="ident">batches</span>, <span class="ident">pallet_timestamp</span>, <span class="ident">Timestamp</span>);
 			<span class="macro">add_benchmark!</span>(<span class="ident">params</span>, <span class="ident">batches</span>, <span class="ident">pallet_collator_selection</span>, <span class="ident">CollatorSelection</span>);
@@ -1977,7 +1996,7 @@
 	<span class="ident">BlockExecutor</span> <span class="op">=</span> <span class="ident">cumulus_pallet_aura_ext::BlockExecutor</span>::<span class="op">&lt;</span><span class="ident">Runtime</span>, <span class="ident">Executive</span><span class="op">&gt;</span>,
 	<span class="ident">CheckInherents</span> <span class="op">=</span> <span class="ident">CheckInherents</span>,
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="statemint_runtime" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
 </body></html>
