@@ -743,9 +743,6 @@
 <span id="743">743</span>
 <span id="744">744</span>
 <span id="745">745</span>
-<span id="746">746</span>
-<span id="747">747</span>
-<span id="748">748</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019-2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// This file is part of Cumulus.</span>
 
@@ -979,7 +976,6 @@
 			<span class="ident">transaction_pool</span>: <span class="ident">transaction_pool</span>.<span class="ident">clone</span>(),
 			<span class="ident">spawn_handle</span>: <span class="ident">task_manager</span>.<span class="ident">spawn_handle</span>(),
 			<span class="ident">import_queue</span>: <span class="ident">import_queue</span>.<span class="ident">clone</span>(),
-			<span class="ident">on_demand</span>: <span class="prelude-val">None</span>,
 			<span class="ident">block_announce_validator_builder</span>: <span class="prelude-val">Some</span>(<span class="ident">Box::new</span>(<span class="ident">block_announce_validator_builder</span>)),
 			<span class="ident">warp_sync</span>: <span class="prelude-val">None</span>,
 		})<span class="question-mark">?</span>;
@@ -991,8 +987,6 @@
 	};
 
 	<span class="kw">let</span> <span class="ident">rpc_handlers</span> <span class="op">=</span> <span class="ident">sc_service::spawn_tasks</span>(<span class="ident">sc_service::SpawnTasksParams</span> {
-		<span class="ident">on_demand</span>: <span class="prelude-val">None</span>,
-		<span class="ident">remote_blockchain</span>: <span class="prelude-val">None</span>,
 		<span class="ident">rpc_extensions_builder</span>,
 		<span class="ident">client</span>: <span class="ident">client</span>.<span class="ident">clone</span>(),
 		<span class="ident">transaction_pool</span>: <span class="ident">transaction_pool</span>.<span class="ident">clone</span>(),
