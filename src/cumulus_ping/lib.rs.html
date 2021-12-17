@@ -306,11 +306,11 @@
 						.<span class="ident">into</span>(),
 					}]),
 				) {
-					<span class="prelude-val">Ok</span>(()) <span class="op">=</span><span class="op">&gt;</span> {
+					<span class="prelude-val">Ok</span>(()) =&gt; {
 						<span class="ident">Pings</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::insert</span>(<span class="ident">seq</span>, <span class="ident">n</span>);
 						<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::PingSent</span>(<span class="ident">para</span>, <span class="ident">seq</span>, <span class="ident">payload</span>));
 					},
-					<span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
+					<span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; {
 						<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::ErrorSendingPing</span>(<span class="ident">e</span>, <span class="ident">para</span>, <span class="ident">seq</span>, <span class="ident">payload</span>));
 					},
 				}
@@ -321,7 +321,7 @@
 	<span class="attribute">#[<span class="ident">pallet::call</span>]</span>
 	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
 		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="number">0</span>)]</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">para</span>: <span class="ident">ParaId</span>, <span class="ident">payload</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResult</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">para</span>: <span class="ident">ParaId</span>, <span class="ident">payload</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">DispatchResult</span> {
 			<span class="ident">ensure_root</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 			<span class="ident">Targets</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::mutate</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="ident">push</span>((<span class="ident">para</span>, <span class="ident">payload</span>)));
 			<span class="prelude-val">Ok</span>(())
@@ -333,7 +333,7 @@
 			<span class="ident">para</span>: <span class="ident">ParaId</span>,
 			<span class="ident">count</span>: <span class="ident">u32</span>,
 			<span class="ident">payload</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-		) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResult</span> {
+		) -&gt; <span class="ident">DispatchResult</span> {
 			<span class="ident">ensure_root</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 			<span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">count</span> {
 				<span class="ident">Targets</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::mutate</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="ident">push</span>((<span class="ident">para</span>, <span class="ident">payload</span>.<span class="ident">clone</span>())));
@@ -342,10 +342,10 @@
 		}
 
 		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="number">0</span>)]</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stop</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">para</span>: <span class="ident">ParaId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResult</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stop</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">para</span>: <span class="ident">ParaId</span>) -&gt; <span class="ident">DispatchResult</span> {
 			<span class="ident">ensure_root</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 			<span class="ident">Targets</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::mutate</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> {
-				<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">p</span>) <span class="op">=</span> <span class="ident">t</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span>(<span class="ident">p</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">p</span> <span class="op">=</span><span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">para</span>) {
+				<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">p</span>) <span class="op">=</span> <span class="ident">t</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span>(<span class="ident">p</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">p</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">para</span>) {
 					<span class="ident">t</span>.<span class="ident">swap_remove</span>(<span class="ident">p</span>);
 				}
 			});
@@ -353,7 +353,7 @@
 		}
 
 		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="number">0</span>)]</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stop_all</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">maybe_para</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ParaId</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResult</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stop_all</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">maybe_para</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ParaId</span><span class="op">&gt;</span>) -&gt; <span class="ident">DispatchResult</span> {
 			<span class="ident">ensure_root</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 			<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">para</span>) <span class="op">=</span> <span class="ident">maybe_para</span> {
 				<span class="ident">Targets</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::mutate</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="ident">retain</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="ident">x</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">x</span> <span class="op">!</span><span class="op">=</span> <span class="ident">para</span>));
@@ -364,7 +364,7 @@
 		}
 
 		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="number">0</span>)]</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ping</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">seq</span>: <span class="ident">u32</span>, <span class="ident">payload</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResult</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ping</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">seq</span>: <span class="ident">u32</span>, <span class="ident">payload</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">DispatchResult</span> {
 			<span class="comment">// Only accept pings from other chains.</span>
 			<span class="kw">let</span> <span class="ident">para</span> <span class="op">=</span> <span class="ident">ensure_sibling_para</span>(<span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&gt;</span><span class="ident">::Origin::from</span>(<span class="ident">origin</span>))<span class="question-mark">?</span>;
 
@@ -382,14 +382,14 @@
 					.<span class="ident">into</span>(),
 				}]),
 			) {
-				<span class="prelude-val">Ok</span>(()) <span class="op">=</span><span class="op">&gt;</span> <span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::PongSent</span>(<span class="ident">para</span>, <span class="ident">seq</span>, <span class="ident">payload</span>)),
-				<span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::ErrorSendingPong</span>(<span class="ident">e</span>, <span class="ident">para</span>, <span class="ident">seq</span>, <span class="ident">payload</span>)),
+				<span class="prelude-val">Ok</span>(()) =&gt; <span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::PongSent</span>(<span class="ident">para</span>, <span class="ident">seq</span>, <span class="ident">payload</span>)),
+				<span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::ErrorSendingPong</span>(<span class="ident">e</span>, <span class="ident">para</span>, <span class="ident">seq</span>, <span class="ident">payload</span>)),
 			}
 			<span class="prelude-val">Ok</span>(())
 		}
 
 		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="number">0</span>)]</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pong</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">seq</span>: <span class="ident">u32</span>, <span class="ident">payload</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResult</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pong</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">seq</span>: <span class="ident">u32</span>, <span class="ident">payload</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">DispatchResult</span> {
 			<span class="comment">// Only accept pings from other chains.</span>
 			<span class="kw">let</span> <span class="ident">para</span> <span class="op">=</span> <span class="ident">ensure_sibling_para</span>(<span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&gt;</span><span class="ident">::Origin::from</span>(<span class="ident">origin</span>))<span class="question-mark">?</span>;
 

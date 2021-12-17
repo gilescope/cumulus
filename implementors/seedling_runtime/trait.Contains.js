@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["seedling_runtime"] = [{"text":"impl <a class=\"trait\" href=\"seedling_runtime/trait.Contains.html\" title=\"trait seedling_runtime::Contains\">Contains</a>&lt;<a class=\"enum\" href=\"seedling_runtime/enum.Call.html\" title=\"enum seedling_runtime::Call\">Call</a>&gt; for <a class=\"struct\" href=\"seedling_runtime/struct.BaseFilter.html\" title=\"struct seedling_runtime::BaseFilter\">BaseFilter</a>","synthetic":false,"types":["seedling_runtime::BaseFilter"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

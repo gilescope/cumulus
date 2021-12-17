@@ -597,7 +597,7 @@
 	<span class="doccomment">/// just identity.</span>
 	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">IdentityCollator</span>;
 	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">sp_runtime::traits::Convert</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">IdentityCollator</span> {
-		<span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">t</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+		<span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">t</span>: <span class="ident">T</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
 			<span class="prelude-val">Some</span>(<span class="ident">t</span>)
 		}
 	}
@@ -702,7 +702,7 @@
 
 	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
 	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">GenesisConfig</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+		<span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
 			<span class="self">Self</span> {
 				<span class="ident">invulnerables</span>: <span class="ident">Default::default</span>(),
 				<span class="ident">candidacy_bond</span>: <span class="ident">Default::default</span>(),
@@ -717,7 +717,7 @@
 			<span class="kw">let</span> <span class="ident">duplicate_invulnerables</span> <span class="op">=</span>
 				<span class="self">self</span>.<span class="ident">invulnerables</span>.<span class="ident">iter</span>().<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">std::collections::BTreeSet</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 			<span class="macro">assert!</span>(
-				<span class="ident">duplicate_invulnerables</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">invulnerables</span>.<span class="ident">len</span>(),
+				<span class="ident">duplicate_invulnerables</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="self">self</span>.<span class="ident">invulnerables</span>.<span class="ident">len</span>(),
 				<span class="string">&quot;duplicate invulnerables in genesis.&quot;</span>
 			);
 
@@ -778,7 +778,7 @@
 		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_invulnerables</span>(
 			<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 			<span class="ident">new</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span>,
-		) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResultWithPostInfo</span> {
+		) -&gt; <span class="ident">DispatchResultWithPostInfo</span> {
 			<span class="ident">T::UpdateOrigin::ensure_origin</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 			<span class="comment">// we trust origin calls, this is just a for more accurate benchmarking</span>
 			<span class="kw">if</span> (<span class="ident">new</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&gt;</span> <span class="ident">T::MaxInvulnerables::get</span>() {
@@ -795,7 +795,7 @@
 		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_desired_candidates</span>(
 			<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 			<span class="ident">max</span>: <span class="ident">u32</span>,
-		) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResultWithPostInfo</span> {
+		) -&gt; <span class="ident">DispatchResultWithPostInfo</span> {
 			<span class="ident">T::UpdateOrigin::ensure_origin</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 			<span class="comment">// we trust origin calls, this is just a for more accurate benchmarking</span>
 			<span class="kw">if</span> <span class="ident">max</span> <span class="op">&gt;</span> <span class="ident">T::MaxCandidates::get</span>() {
@@ -810,7 +810,7 @@
 		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_candidacy_bond</span>(
 			<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 			<span class="ident">bond</span>: <span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
-		) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResultWithPostInfo</span> {
+		) -&gt; <span class="ident">DispatchResultWithPostInfo</span> {
 			<span class="ident">T::UpdateOrigin::ensure_origin</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 			<span class="op">&lt;</span><span class="ident">CandidacyBond</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="kw-2">&amp;</span><span class="ident">bond</span>);
 			<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::NewCandidacyBond</span>(<span class="ident">bond</span>));
@@ -818,7 +818,7 @@
 		}
 
 		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="ident">T::WeightInfo::register_as_candidate</span>(<span class="ident">T::MaxCandidates::get</span>()))]</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">register_as_candidate</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResultWithPostInfo</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">register_as_candidate</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) -&gt; <span class="ident">DispatchResultWithPostInfo</span> {
 			<span class="kw">let</span> <span class="ident">who</span> <span class="op">=</span> <span class="ident">ensure_signed</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 
 			<span class="comment">// ensure we are below limit.</span>
@@ -838,8 +838,8 @@
 			<span class="kw">let</span> <span class="ident">incoming</span> <span class="op">=</span> <span class="ident">CandidateInfo</span> { <span class="ident">who</span>: <span class="ident">who</span>.<span class="ident">clone</span>(), <span class="ident">deposit</span> };
 
 			<span class="kw">let</span> <span class="ident">current_count</span> <span class="op">=</span>
-				<span class="op">&lt;</span><span class="ident">Candidates</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::try_mutate</span>(<span class="op">|</span><span class="ident">candidates</span><span class="op">|</span> <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">DispatchError</span><span class="op">&gt;</span> {
-					<span class="kw">if</span> <span class="ident">candidates</span>.<span class="ident">into_iter</span>().<span class="ident">any</span>(<span class="op">|</span><span class="ident">candidate</span><span class="op">|</span> <span class="ident">candidate</span>.<span class="ident">who</span> <span class="op">=</span><span class="op">=</span> <span class="ident">who</span>) {
+				<span class="op">&lt;</span><span class="ident">Candidates</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::try_mutate</span>(<span class="op">|</span><span class="ident">candidates</span><span class="op">|</span> -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">DispatchError</span><span class="op">&gt;</span> {
+					<span class="kw">if</span> <span class="ident">candidates</span>.<span class="ident">into_iter</span>().<span class="ident">any</span>(<span class="op">|</span><span class="ident">candidate</span><span class="op">|</span> <span class="ident">candidate</span>.<span class="ident">who</span> <span class="op">==</span> <span class="ident">who</span>) {
 						<span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::AlreadyCandidate</span>)<span class="question-mark">?</span>
 					} <span class="kw">else</span> {
 						<span class="ident">T::Currency::reserve</span>(<span class="kw-2">&amp;</span><span class="ident">who</span>, <span class="ident">deposit</span>)<span class="question-mark">?</span>;
@@ -857,7 +857,7 @@
 		}
 
 		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="ident">T::WeightInfo::leave_intent</span>(<span class="ident">T::MaxCandidates::get</span>()))]</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">leave_intent</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResultWithPostInfo</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">leave_intent</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) -&gt; <span class="ident">DispatchResultWithPostInfo</span> {
 			<span class="kw">let</span> <span class="ident">who</span> <span class="op">=</span> <span class="ident">ensure_signed</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 			<span class="macro">ensure!</span>(
 				<span class="ident"><span class="self">Self</span>::candidates</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span> <span class="op">&gt;</span> <span class="ident">T::MinCandidates::get</span>(),
@@ -871,16 +871,16 @@
 
 	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
 		<span class="doccomment">/// Get a unique, inaccessible account id from the `PotId`.</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">account_id</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T::AccountId</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">account_id</span>() -&gt; <span class="ident">T::AccountId</span> {
 			<span class="ident">T::PotId::get</span>().<span class="ident">into_account</span>()
 		}
 		<span class="doccomment">/// Removes a candidate if they exist and sends them back their deposit</span>
-		<span class="kw">fn</span> <span class="ident">try_remove_candidate</span>(<span class="ident">who</span>: <span class="kw-2">&amp;</span><span class="ident">T::AccountId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">DispatchError</span><span class="op">&gt;</span> {
+		<span class="kw">fn</span> <span class="ident">try_remove_candidate</span>(<span class="ident">who</span>: <span class="kw-2">&amp;</span><span class="ident">T::AccountId</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">DispatchError</span><span class="op">&gt;</span> {
 			<span class="kw">let</span> <span class="ident">current_count</span> <span class="op">=</span>
-				<span class="op">&lt;</span><span class="ident">Candidates</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::try_mutate</span>(<span class="op">|</span><span class="ident">candidates</span><span class="op">|</span> <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">DispatchError</span><span class="op">&gt;</span> {
+				<span class="op">&lt;</span><span class="ident">Candidates</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::try_mutate</span>(<span class="op">|</span><span class="ident">candidates</span><span class="op">|</span> -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">DispatchError</span><span class="op">&gt;</span> {
 					<span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> <span class="ident">candidates</span>
 						.<span class="ident">iter</span>()
-						.<span class="ident">position</span>(<span class="op">|</span><span class="ident">candidate</span><span class="op">|</span> <span class="ident">candidate</span>.<span class="ident">who</span> <span class="op">=</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">who</span>)
+						.<span class="ident">position</span>(<span class="op">|</span><span class="ident">candidate</span><span class="op">|</span> <span class="ident">candidate</span>.<span class="ident">who</span> <span class="op">==</span> <span class="kw-2">*</span><span class="ident">who</span>)
 						.<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::NotCandidate</span>)<span class="question-mark">?</span>;
 					<span class="ident">T::Currency::unreserve</span>(<span class="kw-2">&amp;</span><span class="ident">who</span>, <span class="ident">candidates</span>[<span class="ident">index</span>].<span class="ident">deposit</span>);
 					<span class="ident">candidates</span>.<span class="ident">remove</span>(<span class="ident">index</span>);
@@ -894,7 +894,7 @@
 		<span class="doccomment">/// Assemble the current set of candidates and invulnerables into the next collator set.</span>
 		<span class="doccomment">///</span>
 		<span class="doccomment">/// This is done on the fly, as frequent as we are told to do so, as the session manager.</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assemble_collators</span>(<span class="ident">candidates</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assemble_collators</span>(<span class="ident">candidates</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span> {
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">collators</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::invulnerables</span>();
 			<span class="ident">collators</span>.<span class="ident">extend</span>(<span class="ident">candidates</span>.<span class="ident">into_iter</span>().<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>());
 			<span class="ident">collators</span>
@@ -902,7 +902,7 @@
 		<span class="doccomment">/// Kicks out and candidates that did not produce a block in the kick threshold.</span>
 		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">kick_stale_candidates</span>(
 			<span class="ident">candidates</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">CandidateInfo</span><span class="op">&lt;</span><span class="ident">T::AccountId</span>, <span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-		) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span> {
+		) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span> {
 			<span class="kw">let</span> <span class="ident">now</span> <span class="op">=</span> <span class="ident">frame_system::Pallet</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::block_number</span>();
 			<span class="kw">let</span> <span class="ident">kick_threshold</span> <span class="op">=</span> <span class="ident">T::KickThreshold::get</span>();
 			<span class="kw">let</span> <span class="ident">new_candidates</span> <span class="op">=</span> <span class="ident">candidates</span>
@@ -958,7 +958,7 @@
 
 	<span class="doccomment">/// Play the role of the session manager.</span>
 	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">SessionManager</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="kw">fn</span> <span class="ident">new_session</span>(<span class="ident">index</span>: <span class="ident">SessionIndex</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+		<span class="kw">fn</span> <span class="ident">new_session</span>(<span class="ident">index</span>: <span class="ident">SessionIndex</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span><span class="op">&gt;</span> {
 			<span class="macro">log::info!</span>(
 				<span class="string">&quot;assembling new collators for new session {} at #{:?}&quot;</span>,
 				<span class="ident">index</span>,

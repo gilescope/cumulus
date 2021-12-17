@@ -156,19 +156,19 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">WeightInfo</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>);
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">frame_system::Config</span><span class="op">&gt;</span> <span class="ident">pallet_collator_selection::WeightInfo</span> <span class="kw">for</span> <span class="ident">WeightInfo</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
 	<span class="comment">// Storage: CollatorSelection Invulnerables (r:0 w:1)</span>
-	<span class="kw">fn</span> <span class="ident">set_invulnerables</span>(<span class="ident">b</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">set_invulnerables</span>(<span class="ident">b</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">17_178_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 0</span>
 			.<span class="ident">saturating_add</span>((<span class="number">48_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">b</span> <span class="kw">as</span> <span class="ident">Weight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
 	}
 	<span class="comment">// Storage: CollatorSelection DesiredCandidates (r:0 w:1)</span>
-	<span class="kw">fn</span> <span class="ident">set_desired_candidates</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">set_desired_candidates</span>() -&gt; <span class="ident">Weight</span> {
 		(<span class="number">15_237_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
 	}
 	<span class="comment">// Storage: CollatorSelection CandidacyBond (r:0 w:1)</span>
-	<span class="kw">fn</span> <span class="ident">set_candidacy_bond</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">set_candidacy_bond</span>() -&gt; <span class="ident">Weight</span> {
 		(<span class="number">15_968_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
 	}
@@ -178,7 +178,7 @@
 	<span class="comment">// Storage: Session NextKeys (r:1 w:0)</span>
 	<span class="comment">// Storage: CollatorSelection CandidacyBond (r:1 w:0)</span>
 	<span class="comment">// Storage: CollatorSelection LastAuthoredBlock (r:0 w:1)</span>
-	<span class="kw">fn</span> <span class="ident">register_as_candidate</span>(<span class="ident">c</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">register_as_candidate</span>(<span class="ident">c</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">69_104_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 0</span>
 			.<span class="ident">saturating_add</span>((<span class="number">154_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">c</span> <span class="kw">as</span> <span class="ident">Weight</span>))
@@ -187,7 +187,7 @@
 	}
 	<span class="comment">// Storage: CollatorSelection Candidates (r:1 w:1)</span>
 	<span class="comment">// Storage: CollatorSelection LastAuthoredBlock (r:0 w:1)</span>
-	<span class="kw">fn</span> <span class="ident">leave_intent</span>(<span class="ident">c</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">leave_intent</span>(<span class="ident">c</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">65_460_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
 			.<span class="ident">saturating_add</span>((<span class="number">209_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">c</span> <span class="kw">as</span> <span class="ident">Weight</span>))
@@ -197,7 +197,7 @@
 	<span class="comment">// Storage: System Account (r:2 w:2)</span>
 	<span class="comment">// Storage: System BlockWeight (r:1 w:1)</span>
 	<span class="comment">// Storage: CollatorSelection LastAuthoredBlock (r:0 w:1)</span>
-	<span class="kw">fn</span> <span class="ident">note_author</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">note_author</span>() -&gt; <span class="ident">Weight</span> {
 		(<span class="number">62_879_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
@@ -207,7 +207,7 @@
 	<span class="comment">// Storage: System Account (r:1 w:1)</span>
 	<span class="comment">// Storage: CollatorSelection Invulnerables (r:1 w:0)</span>
 	<span class="comment">// Storage: System BlockWeight (r:1 w:1)</span>
-	<span class="kw">fn</span> <span class="ident">new_session</span>(<span class="ident">r</span>: <span class="ident">u32</span>, <span class="ident">c</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">new_session</span>(<span class="ident">r</span>: <span class="ident">u32</span>, <span class="ident">c</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 4_304_000</span>
 			.<span class="ident">saturating_add</span>((<span class="number">24_161_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">r</span> <span class="kw">as</span> <span class="ident">Weight</span>))

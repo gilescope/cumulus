@@ -173,7 +173,7 @@
 		<span class="doccomment">/// An example dispatchable that takes a singles value as a parameter, writes the value to</span>
 		<span class="doccomment">/// storage and emits an event. This function must be dispatched by a signed extrinsic.</span>
 		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="number">10_000</span> <span class="op">+</span> <span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span>))]</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">do_something</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">something</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResultWithPostInfo</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">do_something</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">something</span>: <span class="ident">u32</span>) -&gt; <span class="ident">DispatchResultWithPostInfo</span> {
 			<span class="comment">// Check that the extrinsic was signed and get the signer.</span>
 			<span class="comment">// This function will return an error if the extrinsic is not signed.</span>
 			<span class="comment">// https://docs.substrate.io/v3/runtime/origins</span>
@@ -190,14 +190,14 @@
 
 		<span class="doccomment">/// An example dispatchable that may throw a custom error.</span>
 		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="number">10_000</span> <span class="op">+</span> <span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>,<span class="number">1</span>))]</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cause_error</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DispatchResultWithPostInfo</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cause_error</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) -&gt; <span class="ident">DispatchResultWithPostInfo</span> {
 			<span class="kw">let</span> <span class="ident">_who</span> <span class="op">=</span> <span class="ident">ensure_signed</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 
 			<span class="comment">// Read a value from storage.</span>
 			<span class="kw">match</span> <span class="op">&lt;</span><span class="ident">Something</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::get</span>() {
 				<span class="comment">// Return an error if the value has not been set.</span>
-				<span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::NoneValue</span>)<span class="question-mark">?</span>,
-				<span class="prelude-val">Some</span>(<span class="ident">old</span>) <span class="op">=</span><span class="op">&gt;</span> {
+				<span class="prelude-val">None</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::NoneValue</span>)<span class="question-mark">?</span>,
+				<span class="prelude-val">Some</span>(<span class="ident">old</span>) =&gt; {
 					<span class="comment">// Increment the value read from storage; will error in the event of overflow.</span>
 					<span class="kw">let</span> <span class="ident">new</span> <span class="op">=</span> <span class="ident">old</span>.<span class="ident">checked_add</span>(<span class="number">1</span>).<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::StorageOverflow</span>)<span class="question-mark">?</span>;
 					<span class="comment">// Update the value in storage with the incremented result.</span>

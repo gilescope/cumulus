@@ -191,14 +191,14 @@
 <span class="doccomment">/// Weight functions for `pallet_multisig`.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">WeightInfo</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>);
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">frame_system::Config</span><span class="op">&gt;</span> <span class="ident">pallet_multisig::WeightInfo</span> <span class="kw">for</span> <span class="ident">WeightInfo</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-	<span class="kw">fn</span> <span class="ident">as_multi_threshold_1</span>(<span class="ident">z</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">as_multi_threshold_1</span>(<span class="ident">z</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">20_841_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 0</span>
 			.<span class="ident">saturating_add</span>((<span class="number">1_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">z</span> <span class="kw">as</span> <span class="ident">Weight</span>))
 	}
 	<span class="comment">// Storage: Multisig Multisigs (r:1 w:1)</span>
 	<span class="comment">// Storage: unknown [0x3a65787472696e7369635f696e646578] (r:1 w:0)</span>
-	<span class="kw">fn</span> <span class="ident">as_multi_create</span>(<span class="ident">s</span>: <span class="ident">u32</span>, <span class="ident">z</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">as_multi_create</span>(<span class="ident">s</span>: <span class="ident">u32</span>, <span class="ident">z</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">51_049_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
 			.<span class="ident">saturating_add</span>((<span class="number">158_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
@@ -210,7 +210,7 @@
 	<span class="comment">// Storage: Multisig Multisigs (r:1 w:1)</span>
 	<span class="comment">// Storage: Multisig Calls (r:1 w:1)</span>
 	<span class="comment">// Storage: unknown [0x3a65787472696e7369635f696e646578] (r:1 w:0)</span>
-	<span class="kw">fn</span> <span class="ident">as_multi_create_store</span>(<span class="ident">s</span>: <span class="ident">u32</span>, <span class="ident">z</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">as_multi_create_store</span>(<span class="ident">s</span>: <span class="ident">u32</span>, <span class="ident">z</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">57_754_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
 			.<span class="ident">saturating_add</span>((<span class="number">156_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
@@ -220,7 +220,7 @@
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
 	}
 	<span class="comment">// Storage: Multisig Multisigs (r:1 w:1)</span>
-	<span class="kw">fn</span> <span class="ident">as_multi_approve</span>(<span class="ident">s</span>: <span class="ident">u32</span>, <span class="ident">z</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">as_multi_approve</span>(<span class="ident">s</span>: <span class="ident">u32</span>, <span class="ident">z</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">32_270_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 0</span>
 			.<span class="ident">saturating_add</span>((<span class="number">163_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
@@ -231,7 +231,7 @@
 	}
 	<span class="comment">// Storage: Multisig Multisigs (r:1 w:1)</span>
 	<span class="comment">// Storage: Multisig Calls (r:1 w:1)</span>
-	<span class="kw">fn</span> <span class="ident">as_multi_approve_store</span>(<span class="ident">s</span>: <span class="ident">u32</span>, <span class="ident">z</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">as_multi_approve_store</span>(<span class="ident">s</span>: <span class="ident">u32</span>, <span class="ident">z</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">55_101_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
 			.<span class="ident">saturating_add</span>((<span class="number">172_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
@@ -243,7 +243,7 @@
 	<span class="comment">// Storage: Multisig Multisigs (r:1 w:1)</span>
 	<span class="comment">// Storage: Multisig Calls (r:1 w:1)</span>
 	<span class="comment">// Storage: System Account (r:1 w:1)</span>
-	<span class="kw">fn</span> <span class="ident">as_multi_complete</span>(<span class="ident">s</span>: <span class="ident">u32</span>, <span class="ident">z</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">as_multi_complete</span>(<span class="ident">s</span>: <span class="ident">u32</span>, <span class="ident">z</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">71_355_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
 			.<span class="ident">saturating_add</span>((<span class="number">257_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
@@ -254,7 +254,7 @@
 	}
 	<span class="comment">// Storage: Multisig Multisigs (r:1 w:1)</span>
 	<span class="comment">// Storage: unknown [0x3a65787472696e7369635f696e646578] (r:1 w:0)</span>
-	<span class="kw">fn</span> <span class="ident">approve_as_multi_create</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">approve_as_multi_create</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">51_638_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 0</span>
 			.<span class="ident">saturating_add</span>((<span class="number">153_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
@@ -263,7 +263,7 @@
 	}
 	<span class="comment">// Storage: Multisig Multisigs (r:1 w:1)</span>
 	<span class="comment">// Storage: Multisig Calls (r:1 w:0)</span>
-	<span class="kw">fn</span> <span class="ident">approve_as_multi_approve</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">approve_as_multi_approve</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">30_941_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 0</span>
 			.<span class="ident">saturating_add</span>((<span class="number">169_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
@@ -273,7 +273,7 @@
 	<span class="comment">// Storage: Multisig Multisigs (r:1 w:1)</span>
 	<span class="comment">// Storage: Multisig Calls (r:1 w:1)</span>
 	<span class="comment">// Storage: System Account (r:1 w:1)</span>
-	<span class="kw">fn</span> <span class="ident">approve_as_multi_complete</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">approve_as_multi_complete</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">106_270_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
 			.<span class="ident">saturating_add</span>((<span class="number">267_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
@@ -282,7 +282,7 @@
 	}
 	<span class="comment">// Storage: Multisig Multisigs (r:1 w:1)</span>
 	<span class="comment">// Storage: Multisig Calls (r:1 w:1)</span>
-	<span class="kw">fn</span> <span class="ident">cancel_as_multi</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Weight</span> {
+	<span class="kw">fn</span> <span class="ident">cancel_as_multi</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		(<span class="number">83_024_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
 			.<span class="ident">saturating_add</span>((<span class="number">160_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
