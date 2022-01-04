@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["cumulus_relay_chain_interface"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.57.0/core/fmt/trait.Display.html\" title=\"trait core::fmt::Display\">Display</a> for <a class=\"enum\" href=\"cumulus_relay_chain_interface/enum.WaitError.html\" title=\"enum cumulus_relay_chain_interface::WaitError\">WaitError</a>","synthetic":false,"types":["cumulus_relay_chain_interface::WaitError"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
