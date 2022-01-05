@@ -961,12 +961,6 @@
 <span id="961">961</span>
 <span id="962">962</span>
 <span id="963">963</span>
-<span id="964">964</span>
-<span id="965">965</span>
-<span id="966">966</span>
-<span id="967">967</span>
-<span id="968">968</span>
-<span id="969">969</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020-2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// This file is part of Cumulus.</span>
 
@@ -1466,47 +1460,41 @@
 			<span class="ident">XcmpMessageFormat::ConcatenatedVersionedXcm</span> =&gt; {
 				<span class="kw">while</span> <span class="op">!</span><span class="ident">remaining_fragments</span>.<span class="ident">is_empty</span>() {
 					<span class="ident">last_remaining_fragments</span> <span class="op">=</span> <span class="ident">remaining_fragments</span>;
-					<span class="kw">match</span> <span class="ident">VersionedXcm</span>::<span class="op">&lt;</span><span class="ident">T::Call</span><span class="op">&gt;</span><span class="ident">::decode_and_advance_with_depth_limit</span>(
+					<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">xcm</span>) <span class="op">=</span> <span class="ident">VersionedXcm</span>::<span class="op">&lt;</span><span class="ident">T::Call</span><span class="op">&gt;</span><span class="ident">::decode_and_advance_with_depth_limit</span>(
 						<span class="ident">MAX_XCM_DECODE_DEPTH</span>,
 						<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">remaining_fragments</span>,
 					) {
-						<span class="prelude-val">Ok</span>(<span class="ident">xcm</span>) =&gt; {
-							<span class="kw">let</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">max_weight</span> <span class="op">-</span> <span class="ident">weight_used</span>;
-							<span class="kw">match</span> <span class="ident"><span class="self">Self</span>::handle_xcm_message</span>(<span class="ident">sender</span>, <span class="ident">sent_at</span>, <span class="ident">xcm</span>, <span class="ident">weight</span>) {
-								<span class="prelude-val">Ok</span>(<span class="ident">used</span>) =&gt; <span class="ident">weight_used</span> <span class="op">=</span> <span class="ident">weight_used</span>.<span class="ident">saturating_add</span>(<span class="ident">used</span>),
-								<span class="prelude-val">Err</span>(<span class="ident">XcmError::WeightLimitReached</span>(<span class="ident">required</span>))
-									<span class="kw">if</span> <span class="ident">required</span> <span class="op">&gt;</span> <span class="ident">max_individual_weight</span> =&gt;
-								{
-									<span class="comment">// overweight - add to overweight queue and continue with message</span>
-									<span class="comment">// execution consuming the message.</span>
-									<span class="kw">let</span> <span class="ident">msg_len</span> <span class="op">=</span> <span class="ident">last_remaining_fragments</span>
-										.<span class="ident">len</span>()
-										.<span class="ident">saturating_sub</span>(<span class="ident">remaining_fragments</span>.<span class="ident">len</span>());
-									<span class="kw">let</span> <span class="ident">overweight_xcm</span> <span class="op">=</span>
-										<span class="ident">last_remaining_fragments</span>[..<span class="ident">msg_len</span>].<span class="ident">to_vec</span>();
-									<span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span>
-										<span class="ident"><span class="self">Self</span>::stash_overweight</span>(<span class="ident">sender</span>, <span class="ident">sent_at</span>, <span class="ident">overweight_xcm</span>);
-									<span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span>
-										<span class="ident">Event::OverweightEnqueued</span>(<span class="ident">sender</span>, <span class="ident">sent_at</span>, <span class="ident">index</span>, <span class="ident">required</span>);
-									<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">e</span>);
-								}
-								<span class="prelude-val">Err</span>(<span class="ident">XcmError::WeightLimitReached</span>(<span class="ident">required</span>))
-									<span class="kw">if</span> <span class="ident">required</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">max_weight</span> =&gt;
-								{
-									<span class="comment">// That message didn&#39;t get processed this time because of being</span>
-									<span class="comment">// too heavy. We leave it around for next time and bail.</span>
-									<span class="ident">remaining_fragments</span> <span class="op">=</span> <span class="ident">last_remaining_fragments</span>;
-									<span class="kw">break</span>
-								}
-								<span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
-									<span class="comment">// Message looks invalid; don&#39;t attempt to retry</span>
-								},
-							}
-						},
-						<span class="kw">_</span> =&gt; {
-							<span class="macro">debug_assert!</span>(<span class="bool-val">false</span>, <span class="string">&quot;Invalid incoming XCMP message data&quot;</span>);
-							<span class="ident">remaining_fragments</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="string">b&quot;&quot;</span>[..];
-						},
+						<span class="kw">let</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">max_weight</span> <span class="op">-</span> <span class="ident">weight_used</span>;
+						<span class="kw">match</span> <span class="ident"><span class="self">Self</span>::handle_xcm_message</span>(<span class="ident">sender</span>, <span class="ident">sent_at</span>, <span class="ident">xcm</span>, <span class="ident">weight</span>) {
+							<span class="prelude-val">Ok</span>(<span class="ident">used</span>) =&gt; <span class="ident">weight_used</span> <span class="op">=</span> <span class="ident">weight_used</span>.<span class="ident">saturating_add</span>(<span class="ident">used</span>),
+							<span class="prelude-val">Err</span>(<span class="ident">XcmError::WeightLimitReached</span>(<span class="ident">required</span>))
+								<span class="kw">if</span> <span class="ident">required</span> <span class="op">&gt;</span> <span class="ident">max_individual_weight</span> =&gt;
+							{
+								<span class="comment">// overweight - add to overweight queue and continue with message</span>
+								<span class="comment">// execution consuming the message.</span>
+								<span class="kw">let</span> <span class="ident">msg_len</span> <span class="op">=</span> <span class="ident">last_remaining_fragments</span>
+									.<span class="ident">len</span>()
+									.<span class="ident">saturating_sub</span>(<span class="ident">remaining_fragments</span>.<span class="ident">len</span>());
+								<span class="kw">let</span> <span class="ident">overweight_xcm</span> <span class="op">=</span> <span class="ident">last_remaining_fragments</span>[..<span class="ident">msg_len</span>].<span class="ident">to_vec</span>();
+								<span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::stash_overweight</span>(<span class="ident">sender</span>, <span class="ident">sent_at</span>, <span class="ident">overweight_xcm</span>);
+								<span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">Event::OverweightEnqueued</span>(<span class="ident">sender</span>, <span class="ident">sent_at</span>, <span class="ident">index</span>, <span class="ident">required</span>);
+								<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">e</span>);
+							},
+							<span class="prelude-val">Err</span>(<span class="ident">XcmError::WeightLimitReached</span>(<span class="ident">required</span>))
+								<span class="kw">if</span> <span class="ident">required</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">max_weight</span> =&gt;
+							{
+								<span class="comment">// That message didn&#39;t get processed this time because of being</span>
+								<span class="comment">// too heavy. We leave it around for next time and bail.</span>
+								<span class="ident">remaining_fragments</span> <span class="op">=</span> <span class="ident">last_remaining_fragments</span>;
+								<span class="kw">break</span>
+							},
+							<span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
+								<span class="comment">// Message looks invalid; don&#39;t attempt to retry</span>
+							},
+						}
+					} <span class="kw">else</span> {
+						<span class="macro">debug_assert!</span>(<span class="bool-val">false</span>, <span class="string">&quot;Invalid incoming XCMP message data&quot;</span>);
+						<span class="ident">remaining_fragments</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="string">b&quot;&quot;</span>[..];
 					}
 				}
 			},
