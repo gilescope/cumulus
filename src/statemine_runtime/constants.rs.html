@@ -70,6 +70,7 @@
 <span id="70">70</span>
 <span id="71">71</span>
 <span id="72">72</span>
+<span id="73">73</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (C) 2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0</span>
 
@@ -86,19 +87,20 @@
 <span class="comment">// limitations under the License.</span>
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">currency</span> {
+	<span class="kw">use</span> <span class="ident">kusama_runtime_constants</span> <span class="kw">as</span> <span class="ident">constants</span>;
 	<span class="kw">use</span> <span class="ident">node_primitives::Balance</span>;
 
-	<span class="doccomment">/// The existential deposit. Set to 1/10 of its parent Relay Chain (v9020).</span>
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EXISTENTIAL_DEPOSIT</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">CENTS</span> <span class="op">/</span> <span class="number">10</span>;
+	<span class="doccomment">/// The existential deposit. Set to 1/10 of its parent Relay Chain.</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EXISTENTIAL_DEPOSIT</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">constants::currency::EXISTENTIAL_DEPOSIT</span> <span class="op">/</span> <span class="number">10</span>;
 
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">UNITS</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="number">1_000_000_000_000</span>;
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CENTS</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">UNITS</span> <span class="op">/</span> <span class="number">30_000</span>;
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">GRAND</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">CENTS</span> <span class="op">*</span> <span class="number">100_000</span>;
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MILLICENTS</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">CENTS</span> <span class="op">/</span> <span class="number">1_000</span>;
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">UNITS</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">constants::currency::UNITS</span>;
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CENTS</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">constants::currency::CENTS</span>;
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">GRAND</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">constants::currency::GRAND</span>;
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MILLICENTS</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">constants::currency::MILLICENTS</span>;
 
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">deposit</span>(<span class="ident">items</span>: <span class="ident">u32</span>, <span class="ident">bytes</span>: <span class="ident">u32</span>) -&gt; <span class="ident">Balance</span> {
 		<span class="comment">// map to 1/10 of what the kusama relay chain charges (v9020)</span>
-		(<span class="ident">items</span> <span class="kw">as</span> <span class="ident">Balance</span> <span class="op">*</span> <span class="number">2_000</span> <span class="op">*</span> <span class="ident">CENTS</span> <span class="op">+</span> (<span class="ident">bytes</span> <span class="kw">as</span> <span class="ident">Balance</span>) <span class="op">*</span> <span class="number">100</span> <span class="op">*</span> <span class="ident">MILLICENTS</span>) <span class="op">/</span> <span class="number">10</span>
+		<span class="ident">constants::currency::deposit</span>(<span class="ident">items</span>, <span class="ident">bytes</span>) <span class="op">/</span> <span class="number">10</span>
 	}
 }
 
