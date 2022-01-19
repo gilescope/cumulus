@@ -12,6 +12,7 @@ sourcesIndex["cumulus_pallet_dmp_queue"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["cumulus_pallet_parachain_system"] = {"name":"","dirs":[{"name":"validate_block","files":["mod.rs"]}],"files":["lib.rs","migration.rs","relay_state_snapshot.rs"]};
 sourcesIndex["cumulus_pallet_parachain_system_proc_macro"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["cumulus_pallet_session_benchmarking"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["cumulus_pallet_solo_to_para"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["cumulus_pallet_xcm"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["cumulus_pallet_xcmp_queue"] = {"name":"","files":["lib.rs","migration.rs"]};
 sourcesIndex["cumulus_ping"] = {"name":"","files":["lib.rs"]};
