@@ -475,6 +475,11 @@
 <span id="474">474</span>
 <span id="475">475</span>
 <span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Service and ServiceFactory implementation. Specialized wrapper over substrate service.</span>
 
 <span class="comment">// std</span>
@@ -778,6 +783,8 @@
 		<span class="ident">Arc::new</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">hash</span>, <span class="ident">data</span><span class="op">|</span> <span class="ident">network</span>.<span class="ident">announce_block</span>(<span class="ident">hash</span>, <span class="ident">data</span>))
 	};
 
+	<span class="kw">let</span> <span class="ident">relay_chain_slot_duration</span> <span class="op">=</span> <span class="ident">Duration::from_secs</span>(<span class="number">6</span>);
+
 	<span class="kw">if</span> <span class="ident">validator</span> {
 		<span class="kw">let</span> <span class="ident">parachain_consensus</span> <span class="op">=</span> <span class="ident">build_consensus</span>(
 			<span class="ident">client</span>.<span class="ident">clone</span>(),
@@ -804,7 +811,7 @@
 			<span class="ident">parachain_consensus</span>,
 			<span class="ident">import_queue</span>,
 			<span class="ident">collator_key</span>,
-			<span class="ident">slot_duration</span>: <span class="ident">Duration::from_secs</span>(<span class="number">6</span>),
+			<span class="ident">relay_chain_slot_duration</span>,
 		};
 
 		<span class="ident">start_collator</span>(<span class="ident">params</span>).<span class="kw">await</span><span class="question-mark">?</span>;
@@ -815,6 +822,8 @@
 			<span class="ident">task_manager</span>: <span class="kw-2">&amp;mut</span> <span class="ident">task_manager</span>,
 			<span class="ident">para_id</span>: <span class="ident">id</span>,
 			<span class="ident">relay_chain_interface</span>,
+			<span class="ident">relay_chain_slot_duration</span>,
+			<span class="ident">import_queue</span>,
 		};
 
 		<span class="ident">start_full_node</span>(<span class="ident">params</span>)<span class="question-mark">?</span>;
@@ -909,14 +918,15 @@
 				<span class="ident">BuildAuraConsensusParams</span> {
 					<span class="ident">proposer_factory</span>,
 					<span class="ident">create_inherent_data_providers</span>: <span class="kw">move</span> <span class="op">|</span><span class="kw">_</span>, (<span class="ident">relay_parent</span>, <span class="ident">validation_data</span>)<span class="op">|</span> {
-						<span class="kw">let</span> <span class="ident">parachain_inherent</span> <span class="op">=</span>
+						<span class="kw">let</span> <span class="ident">relay_chain_interface</span> <span class="op">=</span> <span class="ident">relay_chain_interface</span>.<span class="ident">clone</span>();
+						<span class="kw">async</span> <span class="kw">move</span> {
+							<span class="kw">let</span> <span class="ident">parachain_inherent</span> <span class="op">=</span>
 							<span class="ident">cumulus_primitives_parachain_inherent::ParachainInherentData::create_at</span>(
 								<span class="ident">relay_parent</span>,
 								<span class="kw-2">&amp;</span><span class="ident">relay_chain_interface</span>,
 								<span class="kw-2">&amp;</span><span class="ident">validation_data</span>,
 								<span class="ident">id</span>,
-							);
-						<span class="kw">async</span> <span class="kw">move</span> {
+							).<span class="kw">await</span>;
 							<span class="kw">let</span> <span class="ident">time</span> <span class="op">=</span> <span class="ident">sp_timestamp::InherentDataProvider::from_system_time</span>();
 
 							<span class="kw">let</span> <span class="ident">slot</span> <span class="op">=</span>

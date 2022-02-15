@@ -219,7 +219,7 @@
 		<span class="kw-2">mut</span> <span class="ident">block_import_params</span>: <span class="ident">sc_consensus::BlockImportParams</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident"><span class="self">Self</span>::Transaction</span><span class="op">&gt;</span>,
 		<span class="ident">cache</span>: <span class="ident">std::collections::HashMap</span><span class="op">&lt;</span><span class="ident">sp_consensus::CacheKeyId</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">sc_consensus::ImportResult</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span> {
-		<span class="comment">// Best block is determined by the relay chain, or if we are doing the intial sync</span>
+		<span class="comment">// Best block is determined by the relay chain, or if we are doing the initial sync</span>
 		<span class="comment">// we import all blocks as new best.</span>
 		<span class="ident">block_import_params</span>.<span class="ident">fork_choice</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">sc_consensus::ForkChoiceStrategy::Custom</span>(
 			<span class="ident">block_import_params</span>.<span class="ident">origin</span> <span class="op">==</span> <span class="ident">sp_consensus::BlockOrigin::NetworkInitialSync</span>,

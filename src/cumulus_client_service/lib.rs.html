@@ -231,6 +231,40 @@
 <span id="230">230</span>
 <span id="231">231</span>
 <span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020-2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// This file is part of Cumulus.</span>
 
@@ -287,7 +321,7 @@
 	<span class="kw">pub</span> <span class="ident">parachain_consensus</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">ParachainConsensus</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="kw">pub</span> <span class="ident">import_queue</span>: <span class="ident">IQ</span>,
 	<span class="kw">pub</span> <span class="ident">collator_key</span>: <span class="ident">CollatorPair</span>,
-	<span class="kw">pub</span> <span class="ident">slot_duration</span>: <span class="ident">Duration</span>,
+	<span class="kw">pub</span> <span class="ident">relay_chain_slot_duration</span>: <span class="ident">Duration</span>,
 }
 
 <span class="doccomment">/// Start a collator node for a parachain.</span>
@@ -307,7 +341,7 @@
 		<span class="ident">parachain_consensus</span>,
 		<span class="ident">import_queue</span>,
 		<span class="ident">collator_key</span>,
-		<span class="ident">slot_duration</span>,
+		<span class="ident">relay_chain_slot_duration</span>,
 	}: <span class="ident">StartCollatorParams</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Block</span>, <span class="ident">BS</span>, <span class="ident">Client</span>, <span class="ident">RCInterface</span>, <span class="ident">Spawner</span>, <span class="ident">IQ</span><span class="op">&gt;</span>,
 ) -&gt; <span class="ident">sc_service::error::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
 <span class="kw">where</span>
@@ -340,11 +374,16 @@
 		.<span class="ident">spawn_essential_handle</span>()
 		.<span class="ident">spawn</span>(<span class="string">&quot;cumulus-consensus&quot;</span>, <span class="prelude-val">None</span>, <span class="ident">consensus</span>);
 
+	<span class="kw">let</span> <span class="ident">overseer_handle</span> <span class="op">=</span> <span class="ident">relay_chain_interface</span>
+		.<span class="ident">overseer_handle</span>()
+		.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">sc_service::Error::Application</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)))<span class="question-mark">?</span>
+		.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="string">&quot;Polkadot full node did not provide an `OverseerHandle`!&quot;</span>)<span class="question-mark">?</span>;
+
 	<span class="kw">let</span> <span class="ident">pov_recovery</span> <span class="op">=</span> <span class="ident">cumulus_client_pov_recovery::PoVRecovery::new</span>(
-		<span class="ident">relay_chain_interface</span>
-			.<span class="ident">overseer_handle</span>()
-			.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="string">&quot;Polkadot full node did not provide an `OverseerHandle`!&quot;</span>)<span class="question-mark">?</span>,
-		<span class="ident">slot_duration</span>,
+		<span class="ident">overseer_handle</span>.<span class="ident">clone</span>(),
+		<span class="comment">// We want that collators wait at maximum the relay chain slot duration before starting</span>
+		<span class="comment">// to recover blocks.</span>
+		<span class="ident">cumulus_client_pov_recovery::RecoveryDelay::WithMax</span> { <span class="ident">max</span>: <span class="ident">relay_chain_slot_duration</span> },
 		<span class="ident">client</span>.<span class="ident">clone</span>(),
 		<span class="ident">import_queue</span>,
 		<span class="ident">relay_chain_interface</span>.<span class="ident">clone</span>(),
@@ -359,9 +398,7 @@
 		<span class="ident">runtime_api</span>: <span class="ident">client</span>.<span class="ident">clone</span>(),
 		<span class="ident">block_status</span>,
 		<span class="ident">announce_block</span>,
-		<span class="ident">overseer_handle</span>: <span class="ident">relay_chain_interface</span>
-			.<span class="ident">overseer_handle</span>()
-			.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="string">&quot;Polkadot full node did not provide an `OverseerHandle`!&quot;</span>)<span class="question-mark">?</span>,
+		<span class="ident">overseer_handle</span>,
 		<span class="ident">spawner</span>,
 		<span class="ident">para_id</span>,
 		<span class="ident">key</span>: <span class="ident">collator_key</span>,
@@ -373,26 +410,30 @@
 }
 
 <span class="doccomment">/// Parameters given to [`start_full_node`].</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">StartFullNodeParams</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Block</span>: <span class="ident">BlockT</span>, <span class="ident">Client</span>, <span class="ident">RCInterface</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">StartFullNodeParams</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Block</span>: <span class="ident">BlockT</span>, <span class="ident">Client</span>, <span class="ident">RCInterface</span>, <span class="ident">IQ</span><span class="op">&gt;</span> {
 	<span class="kw">pub</span> <span class="ident">para_id</span>: <span class="ident">ParaId</span>,
 	<span class="kw">pub</span> <span class="ident">client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Client</span><span class="op">&gt;</span>,
 	<span class="kw">pub</span> <span class="ident">relay_chain_interface</span>: <span class="ident">RCInterface</span>,
 	<span class="kw">pub</span> <span class="ident">task_manager</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">TaskManager</span>,
 	<span class="kw">pub</span> <span class="ident">announce_block</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="ident">Block::Hash</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">relay_chain_slot_duration</span>: <span class="ident">Duration</span>,
+	<span class="kw">pub</span> <span class="ident">import_queue</span>: <span class="ident">IQ</span>,
 }
 
 <span class="doccomment">/// Start a full node for a parachain.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// A full node will only sync the given parachain and will follow the</span>
 <span class="doccomment">/// tip of the chain.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start_full_node</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">Client</span>, <span class="ident">Backend</span>, <span class="ident">RCInterface</span><span class="op">&gt;</span>(
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start_full_node</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">Client</span>, <span class="ident">Backend</span>, <span class="ident">RCInterface</span>, <span class="ident">IQ</span><span class="op">&gt;</span>(
 	<span class="ident">StartFullNodeParams</span> {
 		<span class="ident">client</span>,
 		<span class="ident">announce_block</span>,
 		<span class="ident">task_manager</span>,
 		<span class="ident">relay_chain_interface</span>,
 		<span class="ident">para_id</span>,
-	}: <span class="ident">StartFullNodeParams</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">Client</span>, <span class="ident">RCInterface</span><span class="op">&gt;</span>,
+		<span class="ident">relay_chain_slot_duration</span>,
+		<span class="ident">import_queue</span>,
+	}: <span class="ident">StartFullNodeParams</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">Client</span>, <span class="ident">RCInterface</span>, <span class="ident">IQ</span><span class="op">&gt;</span>,
 ) -&gt; <span class="ident">sc_service::error::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
 <span class="kw">where</span>
 	<span class="ident">Block</span>: <span class="ident">BlockT</span>,
@@ -406,6 +447,7 @@
 	<span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Client</span>: <span class="ident">BlockImport</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
 	<span class="ident">Backend</span>: <span class="ident">BackendT</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">RCInterface</span>: <span class="ident">RelayChainInterface</span> <span class="op">+</span> <span class="ident">Clone</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+	<span class="ident">IQ</span>: <span class="ident">ImportQueue</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 {
 	<span class="kw">let</span> <span class="ident">consensus</span> <span class="op">=</span> <span class="ident">cumulus_client_consensus_common::run_parachain_consensus</span>(
 		<span class="ident">para_id</span>,
@@ -418,10 +460,36 @@
 		.<span class="ident">spawn_essential_handle</span>()
 		.<span class="ident">spawn</span>(<span class="string">&quot;cumulus-consensus&quot;</span>, <span class="prelude-val">None</span>, <span class="ident">consensus</span>);
 
+	<span class="kw">let</span> <span class="ident">overseer_handle</span> <span class="op">=</span> <span class="ident">relay_chain_interface</span>
+		.<span class="ident">overseer_handle</span>()
+		.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">sc_service::Error::Application</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)))<span class="question-mark">?</span>
+		.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="string">&quot;Polkadot full node did not provide an `OverseerHandle`!&quot;</span>)<span class="question-mark">?</span>;
+
+	<span class="kw">let</span> <span class="ident">pov_recovery</span> <span class="op">=</span> <span class="ident">cumulus_client_pov_recovery::PoVRecovery::new</span>(
+		<span class="ident">overseer_handle</span>,
+		<span class="comment">// Full nodes should at least wait 2.5 minutes (assuming 6 seconds slot duration) and</span>
+		<span class="comment">// in maximum 5 minutes before starting to recover blocks. Collators should already start</span>
+		<span class="comment">// the recovery way before full nodes try to recover a certain block and then share the</span>
+		<span class="comment">// block with the network using &quot;the normal way&quot;. Full nodes are just the &quot;last resort&quot;</span>
+		<span class="comment">// for block recovery.</span>
+		<span class="ident">cumulus_client_pov_recovery::RecoveryDelay::WithMinAndMax</span> {
+			<span class="ident">min</span>: <span class="ident">relay_chain_slot_duration</span> <span class="op">*</span> <span class="number">25</span>,
+			<span class="ident">max</span>: <span class="ident">relay_chain_slot_duration</span> <span class="op">*</span> <span class="number">50</span>,
+		},
+		<span class="ident">client</span>.<span class="ident">clone</span>(),
+		<span class="ident">import_queue</span>,
+		<span class="ident">relay_chain_interface</span>.<span class="ident">clone</span>(),
+		<span class="ident">para_id</span>,
+	);
+
+	<span class="ident">task_manager</span>
+		.<span class="ident">spawn_essential_handle</span>()
+		.<span class="ident">spawn</span>(<span class="string">&quot;cumulus-pov-recovery&quot;</span>, <span class="prelude-val">None</span>, <span class="ident">pov_recovery</span>.<span class="ident">run</span>());
+
 	<span class="prelude-val">Ok</span>(())
 }
 
-<span class="doccomment">/// Prepare the parachain&#39;s node condifugration</span>
+<span class="doccomment">/// Prepare the parachain&#39;s node configuration</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This function will disable the default announcement of Substrate for the parachain in favor</span>
 <span class="doccomment">/// of the one of Cumulus.</span>

@@ -248,11 +248,11 @@
 <span class="comment">// You should have received a copy of the GNU General Public License</span>
 <span class="comment">// along with Cumulus.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
-<span class="doccomment">//! The AuRa consensus algoritm for parachains.</span>
+<span class="doccomment">//! The AuRa consensus algorithm for parachains.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! This extends the Substrate provided AuRa consensus implementation to make it compatible for</span>
-<span class="doccomment">//! parachains. The main entry points for of this consensus algorithm are [`build_aura_consensus`]</span>
-<span class="doccomment">//! and [`import_queue`].</span>
+<span class="doccomment">//! parachains. The main entry points for of this consensus algorithm are [`AuraConsensus::build`]</span>
+<span class="doccomment">//! and [`fn@import_queue`].</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! For more information about AuRa, the Substrate crate should be checked.</span>
 
@@ -450,7 +450,7 @@
 	}
 }
 
-<span class="doccomment">/// Paramaters of [`build_aura_consensus`].</span>
+<span class="doccomment">/// Parameters of [`AuraConsensus::build`].</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BuildAuraConsensusParams</span><span class="op">&lt;</span><span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">CIDP</span>, <span class="ident">Client</span>, <span class="ident">BS</span>, <span class="ident">SO</span><span class="op">&gt;</span> {
 	<span class="kw">pub</span> <span class="ident">proposer_factory</span>: <span class="ident">PF</span>,
 	<span class="kw">pub</span> <span class="ident">create_inherent_data_providers</span>: <span class="ident">CIDP</span>,

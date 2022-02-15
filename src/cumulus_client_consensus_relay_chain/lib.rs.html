@@ -276,7 +276,7 @@
 <span class="comment">// You should have received a copy of the GNU General Public License</span>
 <span class="comment">// along with Cumulus.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
-<span class="doccomment">//! The relay-chain provided consensus algoritm for parachains.</span>
+<span class="doccomment">//! The relay-chain provided consensus algorithm for parachains.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! This is the simplest consensus algorithm you can use when developing a parachain. It is a</span>
 <span class="doccomment">//! permission-less consensus algorithm that doesn&#39;t require any staking or similar to join as a</span>
@@ -290,7 +290,7 @@
 <span class="doccomment">//! 3. The parachain validators validate at most X different parachain candidates, where X is the</span>
 <span class="doccomment">//! total number of parachain validators.</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! 4. The parachain candidate that is backed by the most validators is choosen by the relay-chain</span>
+<span class="doccomment">//! 4. The parachain candidate that is backed by the most validators is chosen by the relay-chain</span>
 <span class="doccomment">//! block producer to be added as backed candidate on chain.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! 5. After the parachain candidate got backed and included, all collators start at 1.</span>
@@ -438,7 +438,7 @@
 			.<span class="ident">propose</span>(
 				<span class="ident">inherent_data</span>,
 				<span class="ident">Default::default</span>(),
-				<span class="comment">//TODO: Fix this.</span>
+				<span class="comment">// TODO: Fix this.</span>
 				<span class="ident">Duration::from_millis</span>(<span class="number">500</span>),
 				<span class="comment">// Set the block limit to 50% of the maximum PoV size.</span>
 				<span class="comment">//</span>
@@ -479,7 +479,7 @@
 	}
 }
 
-<span class="doccomment">/// Paramaters of [`build_relay_chain_consensus`].</span>
+<span class="doccomment">/// Parameters of [`build_relay_chain_consensus`].</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BuildRelayChainConsensusParams</span><span class="op">&lt;</span><span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">CIDP</span>, <span class="ident">RCInterface</span><span class="op">&gt;</span> {
 	<span class="kw">pub</span> <span class="ident">para_id</span>: <span class="ident">ParaId</span>,
 	<span class="kw">pub</span> <span class="ident">proposer_factory</span>: <span class="ident">PF</span>,

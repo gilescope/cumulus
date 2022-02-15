@@ -1085,7 +1085,6 @@
 };
 <span class="kw">use</span> <span class="ident">frame_system</span>::{<span class="ident">ensure_none</span>, <span class="ident">ensure_root</span>};
 <span class="kw">use</span> <span class="ident">polkadot_parachain::primitives::RelayChainBlockNumber</span>;
-<span class="kw">use</span> <span class="ident">relay_state_snapshot::MessagingStateSnapshot</span>;
 <span class="kw">use</span> <span class="ident">sp_runtime</span>::{
 	<span class="ident">traits</span>::{<span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">BlockNumberProvider</span>, <span class="ident">Hash</span>},
 	<span class="ident">transaction_validity</span>::{
@@ -1125,7 +1124,7 @@
 <span class="doccomment">/// # fn main() {}</span>
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">cumulus_pallet_parachain_system_proc_macro::register_validate_block</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">relay_state_snapshot::RelayChainStateProof</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">relay_state_snapshot</span>::{<span class="ident">MessagingStateSnapshot</span>, <span class="ident">RelayChainStateProof</span>};
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">pallet</span>::<span class="kw-2">*</span>;
 
@@ -1137,6 +1136,7 @@
 
 	<span class="attribute">#[<span class="ident">pallet::pallet</span>]</span>
 	<span class="attribute">#[<span class="ident">pallet::storage_version</span>(<span class="ident">migration::STORAGE_VERSION</span>)]</span>
+	<span class="attribute">#[<span class="ident">pallet::without_storage_info</span>]</span>
 	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw">_</span>);
 
 	<span class="attribute">#[<span class="ident">pallet::config</span>]</span>
@@ -1644,7 +1644,7 @@
 	<span class="attribute">#[<span class="ident">pallet::genesis_build</span>]</span>
 	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">GenesisBuild</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">GenesisConfig</span> {
 		<span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-			<span class="comment">//TODO: Remove after https://github.com/paritytech/cumulus/issues/479</span>
+			<span class="comment">// TODO: Remove after https://github.com/paritytech/cumulus/issues/479</span>
 			<span class="ident">sp_io::storage::set</span>(<span class="string">b&quot;:c&quot;</span>, <span class="kw-2">&amp;</span>[]);
 		}
 	}
